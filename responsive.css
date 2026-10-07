@@ -1,0 +1,169 @@
+/* ==========================================================================
+   THAIBA PUBLIC SCHOOL - HOSTEL IRP
+   Responsive Breakpoints & Floating iOS Liquid Glass Bottom Dock
+   ========================================================================== */
+
+/* Floating iOS Liquid Glass Bottom Dock */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 16px;
+  left: 18px;
+  right: 18px;
+  height: 64px;
+  background: var(--glass-bg-hover);
+  backdrop-filter: var(--glass-blur-heavy);
+  -webkit-backdrop-filter: var(--glass-blur-heavy);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-full);
+  z-index: 1000;
+  box-shadow: 0 16px 36px 0 rgba(0, 0, 0, 0.14), var(--glass-specular);
+}
+
+.mobile-bottom-nav-inner {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 0.5rem;
+}
+
+.mob-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.68rem;
+  font-weight: 600;
+  width: 20%;
+  height: 80%;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.mob-nav-item svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2;
+  transition: all var(--transition-fast);
+}
+
+.mob-nav-item:active {
+  transform: scale(0.92);
+}
+
+.mob-nav-item.active {
+  color: var(--primary-700);
+  background: var(--primary-50);
+}
+
+[data-theme="dark"] .mob-nav-item.active {
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.15);
+}
+
+.mob-nav-item.active svg {
+  transform: translateY(-1px);
+}
+
+/* Tablet & Mobile Breakpoints (max-width: 1024px) */
+@media (max-width: 1024px) {
+  :root {
+    --sidebar-width: 250px;
+  }
+
+  .stat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .form-grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile Devices (max-width: 768px) */
+@media (max-width: 768px) {
+  .app-sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+    box-shadow: none;
+    background: var(--glass-bg-hover);
+  }
+
+  .app-sidebar.open {
+    transform: translateX(0);
+    box-shadow: var(--shadow-xl);
+  }
+
+  .sidebar-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 95;
+  }
+
+  .sidebar-backdrop.active {
+    display: block;
+  }
+
+  .header-mobile-toggle {
+    display: flex;
+  }
+
+  .header-search {
+    display: none;
+  }
+
+  .mobile-bottom-nav {
+    display: block;
+  }
+
+  .app-main {
+    padding-bottom: 90px; /* Offset for floating bottom dock */
+  }
+
+  .view-container {
+    padding: 1.25rem 1rem;
+  }
+
+  .stat-grid {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .page-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .form-grid,
+  .form-grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .attendance-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-card {
+    margin: 0.5rem;
+    max-height: 94vh;
+    border-radius: var(--radius-lg);
+  }
+}

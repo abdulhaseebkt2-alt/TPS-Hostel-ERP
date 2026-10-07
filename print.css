@@ -1,0 +1,199 @@
+/* ==========================================================================
+   THAIBA PUBLIC SCHOOL - HOSTEL IRP
+   Print Styles: Student ID Cards, Leave Slips, Fine Slips, Reports
+   ========================================================================== */
+
+@media print {
+  /* Hide non-printable elements */
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 12pt;
+  }
+
+  .app-sidebar,
+  .app-header,
+  .btn,
+  .filter-toolbar,
+  .page-actions,
+  #toast-container,
+  .no-print {
+    display: none !important;
+  }
+
+  .app-main {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .view-container {
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .card {
+    border: 1px solid #ddd !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+  }
+}
+
+/* Printable Document Templates */
+
+/* 1. Student Hostel ID Card */
+.id-card-container {
+  width: 320px;
+  height: 480px;
+  border: 2px solid var(--primary-700);
+  border-radius: 12px;
+  padding: 16px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  margin: 0 auto;
+}
+
+.id-card-header {
+  text-align: center;
+  border-bottom: 2px solid var(--accent-gold-500);
+  padding-bottom: 8px;
+  width: 100%;
+}
+
+.id-card-header h3 {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--primary-800);
+}
+
+.id-card-header p {
+  font-size: 0.7rem;
+  color: var(--neutral-600);
+}
+
+.id-card-photo {
+  width: 90px;
+  height: 100px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 2px solid var(--primary-700);
+  margin: 12px 0 8px 0;
+}
+
+.id-card-name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--primary-900);
+}
+
+.id-card-adm {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent-gold-700);
+  margin-bottom: 8px;
+}
+
+.id-card-details {
+  width: 100%;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  border-top: 1px dashed #ccc;
+  padding-top: 8px;
+}
+
+/* 2. Official Fine Slip */
+.fine-slip-sheet {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 24px;
+  border: 2px solid #0d5c3a;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #111827;
+}
+
+.fine-slip-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 2px solid #0d5c3a;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+
+.fine-slip-logo {
+  height: 48px;
+  width: auto;
+  max-width: 150px;
+  object-fit: contain;
+}
+
+.fine-slip-title h2 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0d5c3a;
+}
+
+.fine-slip-title p {
+  font-size: 0.82rem;
+  color: #4b5563;
+}
+
+.fine-slip-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 14px 0;
+}
+
+.fine-slip-body th, .fine-slip-body td {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  font-size: 0.88rem;
+}
+
+.fine-slip-body th {
+  background-color: #f3f4f6;
+  text-align: left;
+  font-weight: 700;
+}
+
+.fine-amount-box {
+  background-color: #fef2f2;
+  border: 2px solid #ef4444;
+  padding: 12px;
+  text-align: center;
+  border-radius: 6px;
+  margin: 16px 0;
+}
+
+.fine-amount-box h3 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #991b1b;
+}
+
+.fine-signatures {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 40px;
+  padding-top: 12px;
+  border-top: 1px dashed #9ca3af;
+  font-size: 0.85rem;
+}
+
+/* 3. Leave Card Template */
+.leave-card-print {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 24px;
+  border: 2px solid #0d5c3a;
+  border-radius: 8px;
+  background: #ffffff;
+}

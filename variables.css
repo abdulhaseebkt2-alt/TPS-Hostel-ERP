@@ -1,0 +1,184 @@
+/* ==========================================================================
+   THAIBA PUBLIC SCHOOL - HOSTEL IRP DESIGN SYSTEM
+   iPhone Liquid Glass UI (iOS / VisionOS Glassmorphic Minimalist Theme)
+   ========================================================================== */
+
+:root {
+  accent-color: #0d5c3a;
+
+  /* Minimal Refined Brand Accents (Apple Forest & Sage) */
+  --primary-50: rgba(13, 92, 58, 0.06);
+  --primary-100: rgba(13, 92, 58, 0.12);
+  --primary-200: rgba(13, 92, 58, 0.22);
+  --primary-300: #52a87e;
+  --primary-400: #2d8d62;
+  --primary-500: #1b774e;
+  --primary-600: #136642;
+  --primary-700: #0d5c3a; /* Main Apple Forest Accent */
+  --primary-800: #09472c;
+  --primary-900: #05331f;
+
+  --accent-gold-50: rgba(217, 119, 6, 0.06);
+  --accent-gold-100: rgba(217, 119, 6, 0.12);
+  --accent-gold-400: #f59e0b;
+  --accent-gold-500: #d97706;
+  --accent-gold-600: #b45309;
+
+  /* Minimalist Apple Monochrome Grays */
+  --neutral-50: #fbfbfd;
+  --neutral-100: #f5f5f7;
+  --neutral-200: #e8e8ed;
+  --neutral-300: #d2d2d7;
+  --neutral-400: #a1a1a6;
+  --neutral-500: #86868b;
+  --neutral-600: #6e6e73;
+  --neutral-700: #424245;
+  --neutral-800: #2c2c2e;
+  --neutral-900: #1d1d1f;
+  --neutral-950: #000000;
+
+  /* Liquid Glass Surface Tokens - Light Mode */
+  --bg-app: #f2f3f7;
+  --bg-liquid-mesh: radial-gradient(at 10% 10%, rgba(200, 230, 215, 0.45) 0px, transparent 50%),
+                    radial-gradient(at 90% 15%, rgba(220, 235, 245, 0.5) 0px, transparent 50%),
+                    radial-gradient(at 50% 60%, rgba(240, 235, 248, 0.35) 0px, transparent 50%),
+                    radial-gradient(at 80% 90%, rgba(225, 240, 230, 0.4) 0px, transparent 50%),
+                    #f5f6fa;
+  
+  --glass-bg: rgba(255, 255, 255, 0.68);
+  --glass-bg-hover: rgba(255, 255, 255, 0.82);
+  --glass-bg-subtle: rgba(255, 255, 255, 0.45);
+  --glass-bg-active: rgba(255, 255, 255, 0.92);
+  --glass-border: rgba(255, 255, 255, 0.65);
+  --glass-border-subtle: rgba(0, 0, 0, 0.06);
+  --glass-specular: inset 0 1px 0 0 rgba(255, 255, 255, 0.85);
+  --glass-blur: blur(24px) saturate(190%);
+  --glass-blur-heavy: blur(36px) saturate(200%);
+
+  --bg-surface: var(--glass-bg);
+  --bg-surface-secondary: rgba(245, 245, 247, 0.55);
+  --bg-card: var(--glass-bg);
+  
+  --bg-sidebar: rgba(250, 250, 252, 0.72);
+  --bg-sidebar-hover: rgba(0, 0, 0, 0.04);
+  --bg-sidebar-active: rgba(13, 92, 58, 0.09);
+  --text-sidebar: #1d1d1f;
+  --text-sidebar-muted: #86868b;
+
+  --text-primary: #1d1d1f;
+  --text-secondary: #515154;
+  --text-muted: #86868b;
+  --text-inverse: #ffffff;
+
+  --border-color: rgba(0, 0, 0, 0.07);
+  --border-subtle: rgba(0, 0, 0, 0.04);
+  --border-focus: #0d5c3a;
+
+  /* Minimal Translucent Status Tints */
+  --success-bg: rgba(16, 185, 129, 0.09);
+  --success-border: rgba(16, 185, 129, 0.22);
+  --success-text: #047857;
+  --success-solid: #10b981;
+
+  --warning-bg: rgba(245, 158, 11, 0.09);
+  --warning-border: rgba(245, 158, 11, 0.22);
+  --warning-text: #b45309;
+  --warning-solid: #f59e0b;
+
+  --danger-bg: rgba(239, 68, 68, 0.08);
+  --danger-border: rgba(239, 68, 68, 0.2);
+  --danger-text: #b91c1c;
+  --danger-solid: #ef4444;
+
+  --info-bg: rgba(2, 132, 199, 0.08);
+  --info-border: rgba(2, 132, 199, 0.2);
+  --info-text: #0369a1;
+  --info-solid: #0284c7;
+
+  --purple-bg: rgba(147, 51, 234, 0.08);
+  --purple-border: rgba(147, 51, 234, 0.2);
+  --purple-text: #7e22ce;
+  --purple-solid: #9333ea;
+
+  /* iOS Soft Diffused Shadows */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  --shadow-sm: 0 2px 8px 0 rgba(0, 0, 0, 0.04), 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+  --shadow-md: 0 8px 24px -4px rgba(0, 0, 0, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 16px 36px -6px rgba(0, 0, 0, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 24px 48px -12px rgba(0, 0, 0, 0.12), 0 8px 20px -4px rgba(0, 0, 0, 0.06);
+
+  /* iOS Continuous Squircles */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+
+  /* Smooth Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 240ms ease;
+  --transition-slow: 350ms ease;
+  --transition-spring: 200ms ease;
+
+  /* Dimensions */
+  --sidebar-width: 275px;
+  --sidebar-collapsed-width: 76px;
+  --header-height: 68px;
+}
+
+/* Dark Mode (Midnight Obsidian Liquid Glass) */
+[data-theme="dark"] {
+  --bg-app: #0b0c10;
+  --bg-liquid-mesh: radial-gradient(at 10% 10%, rgba(13, 92, 58, 0.22) 0px, transparent 55%),
+                    radial-gradient(at 90% 15%, rgba(30, 45, 70, 0.3) 0px, transparent 50%),
+                    radial-gradient(at 50% 60%, rgba(40, 25, 60, 0.2) 0px, transparent 50%),
+                    radial-gradient(at 80% 90%, rgba(15, 60, 40, 0.25) 0px, transparent 50%),
+                    #0d0e12;
+
+  --glass-bg: rgba(22, 24, 30, 0.72);
+  --glass-bg-hover: rgba(30, 33, 42, 0.82);
+  --glass-bg-subtle: rgba(18, 20, 26, 0.55);
+  --glass-bg-active: rgba(36, 40, 52, 0.92);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-border-subtle: rgba(255, 255, 255, 0.07);
+  --glass-specular: inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
+
+  --bg-surface: var(--glass-bg);
+  --bg-surface-secondary: rgba(16, 18, 24, 0.65);
+  --bg-card: var(--glass-bg);
+
+  --bg-sidebar: rgba(16, 18, 24, 0.78);
+  --bg-sidebar-hover: rgba(255, 255, 255, 0.05);
+  --bg-sidebar-active: rgba(13, 92, 58, 0.25);
+  --text-sidebar: #f5f5f7;
+  --text-sidebar-muted: #86868b;
+
+  --text-primary: #f5f5f7;
+  --text-secondary: #a1a1a6;
+  --text-muted: #6e6e73;
+
+  --border-color: rgba(255, 255, 255, 0.1);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+
+  --shadow-sm: 0 2px 8px 0 rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 24px -4px rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 16px 36px -6px rgba(0, 0, 0, 0.65);
+  --shadow-xl: 0 24px 48px -12px rgba(0, 0, 0, 0.75);
+
+  --success-bg: rgba(16, 185, 129, 0.14);
+  --success-border: rgba(16, 185, 129, 0.28);
+  --success-text: #34d399;
+
+  --warning-bg: rgba(245, 158, 11, 0.14);
+  --warning-border: rgba(245, 158, 11, 0.28);
+  --warning-text: #fbbf24;
+
+  --danger-bg: rgba(239, 68, 68, 0.14);
+  --danger-border: rgba(239, 68, 68, 0.28);
+  --danger-text: #f87171;
+
+  --info-bg: rgba(2, 132, 199, 0.14);
+  --info-border: rgba(2, 132, 199, 0.28);
+  --info-text: #38bdf8;
+}

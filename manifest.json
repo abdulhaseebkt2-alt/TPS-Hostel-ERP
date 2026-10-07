@@ -1,0 +1,19 @@
+{
+  "name": "Thaiba Public School – Hostel IRP",
+  "short_name": "TPS Hostel IRP",
+  "description": "Hostel Integrated Resource & Management Platform for Thaiba Public School",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0d5c3a",
+  "theme_color": "#0d5c3a",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "logo.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "management", "productivity"]
+}

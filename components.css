@@ -1,0 +1,1587 @@
+/* ==========================================================================
+   THAIBA PUBLIC SCHOOL - HOSTEL IRP
+   iPhone Liquid Glass UI Components (Cards, Buttons, Tables, Forms, Badges)
+   ========================================================================== */
+
+/* Liquid Glass Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1.25rem;
+  border-radius: var(--radius-full);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: 1px solid transparent;
+  text-decoration: none;
+  line-height: 1.25;
+  user-select: none;
+  letter-spacing: -0.01em;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn-sm {
+  padding: 0.38rem 0.85rem;
+  font-size: 0.78rem;
+}
+
+.btn-lg {
+  padding: 0.75rem 1.65rem;
+  font-size: 0.98rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #0d5c3a 0%, #157d50 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 14px 0 rgba(13, 92, 58, 0.28);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #0a4d30 0%, #116e45 100%);
+  box-shadow: 0 6px 18px 0 rgba(13, 92, 58, 0.38);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-xs);
+}
+
+.btn-secondary:hover {
+  background: var(--glass-bg-hover);
+  color: var(--text-primary);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+}
+
+.btn-danger:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  transform: translateY(-1px);
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-outline-primary {
+  background: var(--primary-50);
+  color: var(--primary-700);
+  border: 1px solid var(--primary-200);
+  backdrop-filter: blur(12px);
+}
+
+.btn-outline-primary:hover {
+  background: var(--primary-100);
+  border-color: var(--primary-300);
+  transform: translateY(-1px);
+}
+
+.btn-outline-danger {
+  background: var(--danger-bg);
+  color: var(--danger-solid);
+  border: 1px solid var(--danger-border);
+  backdrop-filter: blur(12px);
+}
+
+.btn-outline-danger:hover {
+  background: rgba(239, 68, 68, 0.16);
+}
+
+/* Liquid Glass Stat Cards */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-radius: var(--radius-lg);
+  padding: 1.35rem;
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-sm), var(--glass-specular);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-fast);
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md), var(--glass-specular);
+  border-color: rgba(255, 255, 255, 0.9);
+}
+
+.stat-card-info h4 {
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-muted);
+  margin-bottom: 0.35rem;
+}
+
+.stat-card-value {
+  font-size: 1.95rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.stat-card-sub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.stat-card-sub.positive { color: var(--success-text); font-weight: 600; }
+.stat-card-sub.negative { color: var(--danger-text); font-weight: 600; }
+
+.stat-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  background: var(--primary-50);
+  color: var(--primary-700);
+  border: 1px solid var(--primary-100);
+  box-shadow: var(--shadow-xs);
+  flex-shrink: 0;
+}
+
+.stat-card.boys .stat-card-icon { background: rgba(2, 132, 199, 0.1); color: #0284c7; border-color: rgba(2, 132, 199, 0.2); }
+.stat-card.girls .stat-card-icon { background: rgba(219, 39, 119, 0.1); color: #db2777; border-color: rgba(219, 39, 119, 0.2); }
+.stat-card.danger .stat-card-icon { background: var(--danger-bg); color: var(--danger-solid); border-color: var(--danger-border); }
+.stat-card.warning .stat-card-icon { background: var(--warning-bg); color: var(--warning-solid); border-color: var(--warning-border); }
+
+/* Standard UI Card (Liquid Glass Sheet) */
+.card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-md), var(--glass-specular);
+  margin-bottom: 1.75rem;
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 1.15rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.3);
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+[data-theme="dark"] .card-header {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.card-header h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  letter-spacing: -0.015em;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.card-footer {
+  padding: 0.95rem 1.5rem;
+  border-top: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Filter Bar Component */
+.filter-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1.25rem;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-sm), var(--glass-specular);
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 50;
+  overflow: visible;
+}
+
+.filter-search {
+  flex: 1;
+  min-width: 240px;
+  position: relative;
+}
+
+.filter-search input {
+  width: 100%;
+  padding: 0.55rem 1rem 0.55rem 2.4rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg-hover);
+  color: var(--text-primary);
+  font-size: 0.86rem;
+  font-weight: 500;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.04), var(--glass-specular);
+  transition: all var(--transition-fast);
+}
+
+.filter-search input:hover {
+  background: var(--glass-bg-active);
+  border-color: rgba(13, 92, 58, 0.3);
+  box-shadow: 0 6px 20px 0 rgba(13, 92, 58, 0.08), var(--glass-specular);
+}
+
+.filter-search input:focus {
+  outline: none;
+  border-color: var(--primary-500);
+  background: var(--glass-bg-active);
+  box-shadow: 0 0 0 3px rgba(13, 92, 58, 0.15), 0 6px 20px 0 rgba(13, 92, 58, 0.08), var(--glass-specular);
+}
+
+.filter-search svg {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1rem;
+  height: 1rem;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+/* Liquid Glass Filter Dropdown Select (Centered Text & Curved Glass Sheen) */
+.filter-select {
+  padding: 0.55rem 1.25rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg-hover);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.04), var(--glass-specular);
+  transition: all var(--transition-fast);
+  text-align: center;
+  text-align-last: center;
+  -webkit-text-align-last: center;
+  -moz-text-align-last: center;
+}
+
+.filter-select:hover {
+  background: var(--glass-bg-active);
+  border-color: rgba(13, 92, 58, 0.3);
+  box-shadow: 0 6px 20px 0 rgba(13, 92, 58, 0.08), var(--glass-specular);
+  transform: translateY(-1px);
+}
+
+.filter-select:focus {
+  border-color: var(--primary-500);
+  background: var(--glass-bg-active);
+  box-shadow: 0 0 0 3px rgba(13, 92, 58, 0.15), 0 6px 20px 0 rgba(13, 92, 58, 0.08), var(--glass-specular);
+}
+
+.filter-select option {
+  background: var(--bg-surface-primary, #ffffff);
+  color: var(--text-primary);
+  font-weight: 500;
+  padding: 8px 12px;
+  text-align: center;
+}
+
+[data-theme="dark"] .filter-select option {
+  background: #1a1e24;
+  color: #f1f5f9;
+}
+
+/* Data Table Component */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  text-align: left;
+}
+
+.data-table th {
+  padding: 0.85rem 1.15rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-muted);
+  background: rgba(245, 245, 247, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+[data-theme="dark"] .data-table th {
+  background: rgba(20, 27, 45, 0.92);
+}
+
+.data-table td {
+  padding: 0.95rem 1.15rem;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  vertical-align: middle;
+}
+
+.data-table tbody tr {
+  transition: all var(--transition-fast);
+}
+
+.data-table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.45);
+}
+
+[data-theme="dark"] .data-table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+.table-user-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.table-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-xs);
+  flex-shrink: 0;
+}
+
+.table-user-name {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.table-user-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Liquid Glass Badge Capsules */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  border: 1px solid transparent;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.badge-success { background-color: var(--success-bg); color: var(--success-text); border-color: var(--success-border); }
+.badge-warning { background-color: var(--warning-bg); color: var(--warning-text); border-color: var(--warning-border); }
+.badge-danger { background-color: var(--danger-bg); color: var(--danger-text); border-color: var(--danger-border); }
+.badge-info { background-color: var(--info-bg); color: var(--info-text); border-color: var(--info-border); }
+.badge-purple { background-color: var(--purple-bg); color: var(--purple-text); border-color: var(--purple-border); }
+.badge-neutral { background-color: rgba(0, 0, 0, 0.05); color: var(--text-muted); border-color: var(--border-color); }
+
+/* Inset Liquid Glass Form Elements */
+.form-group {
+  margin-bottom: 1.15rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.4rem;
+}
+
+.form-label .required {
+  color: var(--danger-solid);
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.62rem 0.95rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--glass-bg-subtle);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--text-primary);
+  font-size: 0.88rem;
+  transition: all var(--transition-fast);
+  accent-color: var(--primary-700);
+}
+
+.form-control:focus {
+  outline: none;
+  background: var(--glass-bg-hover);
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 3px rgba(13, 92, 58, 0.14);
+}
+
+select.form-control {
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  background-size: 13px 13px;
+  padding-right: 2.2rem;
+}
+
+select.form-control option {
+  background: var(--bg-surface-primary, #ffffff);
+  color: var(--text-primary);
+  font-weight: 500;
+  padding: 8px 12px;
+}
+
+[data-theme="dark"] select.form-control {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+[data-theme="dark"] select.form-control option {
+  background: #1e293b;
+  color: #f8fafc;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.form-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.form-hint {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+/* iOS Segmented Pill Tab Bar */
+.tab-nav {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--glass-bg-subtle);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 0.35rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-xs);
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tab-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.tab-btn {
+  padding: 0.52rem 1.15rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  user-select: none;
+}
+
+.tab-btn:hover {
+  color: var(--text-primary);
+  background: rgba(0, 0, 0, 0.03);
+}
+
+[data-theme="dark"] .tab-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tab-btn.active {
+  color: var(--primary-700);
+  background: var(--glass-bg-hover);
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.08);
+  font-weight: 700;
+}
+
+[data-theme="dark"] .tab-btn.active {
+  color: #34d399;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 3.5rem 1.5rem;
+}
+
+.empty-state-icon {
+  font-size: 3rem;
+  color: var(--neutral-400);
+  margin-bottom: 0.75rem;
+}
+
+.empty-state h4 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.35rem;
+}
+
+.empty-state p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  max-width: 400px;
+  margin: 0 auto 1.25rem auto;
+}
+
+/* Quick Action Liquid Tile */
+.quick-action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.35rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--shadow-sm), var(--glass-specular);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  text-align: center;
+  gap: 0.6rem;
+}
+
+.quick-action-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md), var(--glass-specular);
+  border-color: rgba(255, 255, 255, 0.9);
+}
+
+.quick-action-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius-full);
+  background: var(--primary-50);
+  color: var(--primary-700);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  box-shadow: var(--shadow-xs);
+}
+
+.quick-action-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Minimalist Action Buttons & Icons */
+.btn-minimal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.32rem 0.75rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-color);
+  background: var(--glass-bg-subtle);
+  color: var(--text-secondary);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  line-height: 1;
+}
+
+.btn-minimal:hover {
+  background: var(--glass-bg-hover);
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.9);
+  transform: translateY(-1px);
+}
+
+.btn-minimal-primary {
+  color: var(--primary-700);
+  background: rgba(13, 92, 58, 0.05);
+  border-color: rgba(13, 92, 58, 0.2);
+}
+
+.btn-minimal-primary:hover {
+  background: rgba(13, 92, 58, 0.12);
+  color: var(--primary-800);
+  border-color: var(--primary-500);
+}
+
+.btn-minimal-wa {
+  color: #059669;
+  background: rgba(16, 185, 129, 0.07);
+  border-color: rgba(16, 185, 129, 0.25);
+}
+
+.btn-minimal-wa:hover {
+  background: rgba(16, 185, 129, 0.15);
+  color: #047857;
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.btn-minimal-danger {
+  color: #dc2626;
+  background: rgba(239, 68, 68, 0.06);
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+.btn-minimal-danger:hover {
+  background: rgba(239, 68, 68, 0.14);
+  color: #b91c1c;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.icon-btn-minimal {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-color);
+  background: var(--glass-bg-subtle);
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  padding: 0;
+  backdrop-filter: blur(8px);
+}
+
+.icon-btn-minimal:hover {
+  background: var(--glass-bg-hover);
+  color: var(--text-primary);
+  border-color: var(--primary-500);
+  transform: translateY(-1px);
+}
+
+.icon-btn-minimal.danger:hover {
+  background: rgba(239, 68, 68, 0.12);
+  color: #dc2626;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+/* User-Friendly Bed Assignment Student Cards */
+.bed-assign-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.bed-student-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 0.35rem 0.2rem;
+  scrollbar-width: thin;
+}
+
+.bed-student-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 0.95rem;
+  background: var(--glass-bg-subtle);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  gap: 0.75rem;
+}
+
+.bed-student-card:hover {
+  background: var(--glass-bg-hover);
+  border-color: var(--primary-400);
+  transform: translateY(-1px);
+}
+
+.bed-student-card.selected {
+  background: rgba(13, 92, 58, 0.08);
+  border-color: var(--primary-600);
+  box-shadow: 0 0 0 2px rgba(13, 92, 58, 0.2);
+}
+
+[data-theme="dark"] .bed-student-card.selected {
+  background: rgba(52, 211, 153, 0.12);
+  border-color: #34d399;
+}
+
+.bed-student-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+  border: 1.5px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.bed-student-check {
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: transparent;
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+}
+
+.bed-student-card.selected .bed-student-check {
+  background: var(--primary-700);
+  border-color: var(--primary-700);
+  color: #ffffff;
+}
+
+[data-theme="dark"] .bed-student-card.selected .bed-student-check {
+  background: #34d399;
+  border-color: #34d399;
+  color: #064e3b;
+}
+
+/* ==========================================================================
+   Liquid Glass Custom Dropdown (Curved Corners, Frosted Glass Blur & Shimmer)
+   ========================================================================== */
+.glass-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.glass-dropdown.open {
+  z-index: 999;
+}
+
+.glass-dropdown-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  padding: 0.52rem 0.95rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-color);
+  background: var(--glass-bg-subtle);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: all var(--transition-fast);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  user-select: none;
+  white-space: nowrap;
+}
+
+.filter-toolbar .glass-dropdown-toggle {
+  background: var(--glass-bg-hover);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.04), var(--glass-specular);
+  font-weight: 600;
+  padding: 0.55rem 1.15rem;
+}
+
+.glass-dropdown-toggle:hover,
+.filter-toolbar .glass-dropdown-toggle:hover {
+  background: var(--glass-bg-active);
+  border-color: rgba(13, 92, 58, 0.28);
+  box-shadow: 0 6px 20px 0 rgba(13, 92, 58, 0.08), var(--glass-specular);
+  transform: translateY(-1px);
+}
+
+.glass-dropdown.open .glass-dropdown-toggle {
+  border-color: var(--primary-500);
+  background: var(--glass-bg-active);
+  box-shadow: 0 0 0 3px rgba(13, 92, 58, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transform: translateY(0);
+}
+
+.glass-dropdown-toggle .arrow-icon {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.glass-dropdown.open .glass-dropdown-toggle .arrow-icon {
+  transform: rotate(180deg);
+  color: var(--primary-700);
+}
+
+.glass-dropdown.full-width {
+  width: 100%;
+  display: block;
+}
+
+.glass-dropdown.full-width .glass-dropdown-toggle {
+  width: 100%;
+  justify-content: space-between;
+}
+
+.glass-dropdown.full-width .glass-dropdown-menu {
+  width: 100%;
+  min-width: 100%;
+}
+
+/* Liquid Glass Menu Popup with Curved Bottom Corners & Blur */
+.glass-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 230px;
+  max-height: 280px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 16px;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+  box-shadow: 
+    0 20px 45px -4px rgba(0, 0, 0, 0.16),
+    0 8px 20px -2px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.95);
+  padding: 0.45rem;
+  z-index: 9999;
+  display: none;
+  flex-direction: column;
+  gap: 3px;
+  opacity: 0;
+  transform: translateY(-5px) scale(0.99);
+  transform-origin: top left;
+  transition: opacity 0.16s ease, transform 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-theme="dark"] .glass-dropdown-menu {
+  background: rgba(20, 28, 46, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 
+    0 22px 50px -4px rgba(0, 0, 0, 0.55),
+    0 10px 22px -2px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+}
+
+.glass-dropdown.open .glass-dropdown-menu {
+  display: flex;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.glass-dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem 0.85rem;
+  border-radius: 10px;
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  gap: 0.6rem;
+}
+
+.glass-dropdown-item:hover {
+  background: rgba(13, 92, 58, 0.08);
+  color: var(--primary-700);
+}
+
+[data-theme="dark"] .glass-dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #34d399;
+}
+
+.glass-dropdown-item.active {
+  background: linear-gradient(135deg, rgba(13, 92, 58, 0.12) 0%, rgba(21, 125, 80, 0.16) 100%);
+  color: var(--primary-700);
+  font-weight: 600;
+}
+
+[data-theme="dark"] .glass-dropdown-item.active {
+  background: rgba(52, 211, 153, 0.16);
+  color: #34d399;
+}
+
+.glass-dropdown-item.active::after {
+  content: '✓';
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--primary-700);
+}
+
+[data-theme="dark"] .glass-dropdown-item.active::after {
+  color: #34d399;
+}
+
+/* ==========================================================================
+   Liquid Glass Datepicker & Calendar (Curved Corners & Frosted Glass Blur)
+   ========================================================================== */
+.glass-datepicker-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.glass-datepicker-wrapper.full-width {
+  width: 100%;
+  display: block;
+}
+
+.glass-datepicker-wrapper.full-width .glass-datepicker-toggle {
+  width: 100%;
+  justify-content: space-between;
+}
+
+.glass-datepicker-wrapper.open {
+  z-index: 999;
+}
+
+.glass-datepicker-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: var(--glass-bg-hover);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border-color);
+  padding: 0.45rem 0.95rem;
+  border-radius: var(--radius-full);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  cursor: pointer;
+  outline: none;
+  transition: all var(--transition-fast);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  user-select: none;
+}
+
+.glass-datepicker-toggle:hover {
+  border-color: var(--primary-400);
+  background: var(--glass-bg-active);
+  box-shadow: 0 3px 10px rgba(13, 92, 58, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.glass-datepicker-wrapper.open .glass-datepicker-toggle {
+  border-color: var(--primary-600);
+  box-shadow: 0 0 0 3px rgba(13, 92, 58, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.glass-datepicker-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: auto;
+  width: 300px;
+  max-width: calc(100vw - 32px);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(32px) saturate(190%);
+  -webkit-backdrop-filter: blur(32px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 20px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  box-shadow: 
+    0 24px 50px -6px rgba(0, 0, 0, 0.18),
+    0 8px 24px -2px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.95);
+  padding: 1.15rem;
+  z-index: 9999;
+  display: none;
+  flex-direction: column;
+  gap: 0.85rem;
+  opacity: 0;
+  transform: translateY(-5px) scale(0.99);
+  transform-origin: top left;
+  transition: opacity 0.16s ease, transform 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.glass-datepicker-popover.popover-align-right,
+.glass-timepicker-popover.popover-align-right {
+  left: auto;
+  right: 0;
+  transform-origin: top right;
+}
+
+[data-theme="dark"] .glass-datepicker-popover {
+  background: rgba(20, 28, 48, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 
+    0 24px 50px -6px rgba(0, 0, 0, 0.6),
+    0 10px 24px -2px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+}
+
+.glass-datepicker-wrapper.open .glass-datepicker-popover {
+  display: flex;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.glass-cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.glass-cal-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.glass-cal-nav-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-color);
+  background: var(--glass-bg-subtle);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: all var(--transition-fast);
+}
+
+.glass-cal-nav-btn:hover {
+  background: var(--glass-bg-hover);
+  color: var(--primary-700);
+  border-color: var(--primary-300);
+}
+
+.glass-cal-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.glass-cal-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+
+.glass-cal-day {
+  height: 32px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.14s ease;
+  position: relative;
+}
+
+.glass-cal-day:hover:not(.empty):not(.selected) {
+  background: rgba(13, 92, 58, 0.09);
+  color: var(--primary-700);
+  transform: scale(1.05);
+}
+
+[data-theme="dark"] .glass-cal-day:hover:not(.empty):not(.selected) {
+  background: rgba(52, 211, 153, 0.15);
+  color: #34d399;
+}
+
+.glass-cal-day.empty {
+  cursor: default;
+  opacity: 0.28;
+  color: var(--text-muted);
+}
+
+.glass-cal-day.today::after {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--primary-600);
+}
+
+.glass-cal-day.selected {
+  background: linear-gradient(135deg, #0d5c3a 0%, #157d50 100%);
+  color: #ffffff !important;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(13, 92, 58, 0.32);
+}
+
+.glass-cal-day.selected::after {
+  background: #ffffff;
+}
+
+.glass-cal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border-subtle);
+  font-size: 0.8rem;
+}
+
+.glass-cal-today-btn {
+  background: transparent;
+  border: none;
+  color: var(--primary-700);
+  font-weight: 700;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+  transition: all var(--transition-fast);
+}
+
+.glass-cal-today-btn:hover {
+  background: var(--primary-50);
+}
+
+/* Batch Leave Student Item - Liquid Glass */
+.batch-student-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.6rem 0.85rem;
+  border-radius: var(--radius-md);
+  background: var(--glass-bg-subtle);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+.batch-student-item:hover {
+  background: var(--glass-bg-hover);
+  border-color: rgba(13, 92, 58, 0.25);
+  transform: translateX(2px);
+}
+
+.batch-student-item.selected {
+  background: rgba(13, 92, 58, 0.08);
+  border-color: var(--primary-600);
+  box-shadow: 0 0 0 1.5px var(--primary-600);
+}
+
+[data-theme="dark"] .batch-student-item.selected {
+  background: rgba(52, 211, 153, 0.12);
+  border-color: #34d399;
+}
+
+/* ==========================================================================
+   Liquid Glass Time Input & Timepicker (Typing Supported + Frosted Glass)
+   ========================================================================== */
+.glass-time-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 14px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: center;
+  padding: 0.6rem 0.95rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03), inset 0 1px 0 0 rgba(255, 255, 255, 0.95);
+  outline: none;
+  transition: all var(--transition-fast);
+  cursor: text;
+  font-family: inherit;
+  letter-spacing: 0.5px;
+  accent-color: #0d5c3a;
+  color-scheme: light;
+}
+
+.glass-time-input:hover {
+  border-color: var(--primary-400);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 4px 14px rgba(13, 92, 58, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+.glass-time-input:focus {
+  border-color: var(--primary-600);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(13, 92, 58, 0.15), 0 4px 14px rgba(13, 92, 58, 0.1);
+}
+
+[data-theme="dark"] .glass-time-input {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: var(--text-primary);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  accent-color: #10b981;
+  color-scheme: dark;
+}
+
+[data-theme="dark"] .glass-time-input:focus {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--primary-400);
+  box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.2);
+}
+
+.glass-time-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 2px;
+  opacity: 0.75;
+  transition: opacity 0.15s ease;
+}
+
+.glass-time-input::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+.glass-timepicker-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.glass-timepicker-wrapper.open {
+  z-index: 999;
+}
+
+.glass-timepicker-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  background: var(--glass-bg-hover);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border-color);
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-full);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  cursor: pointer;
+  outline: none;
+  transition: all var(--transition-fast);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  user-select: none;
+  white-space: nowrap;
+}
+
+.glass-timepicker-toggle:hover {
+  border-color: var(--primary-400);
+  background: var(--glass-bg-active);
+  box-shadow: 0 3px 10px rgba(13, 92, 58, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.glass-timepicker-wrapper.open .glass-timepicker-toggle {
+  border-color: var(--primary-600);
+  box-shadow: 0 0 0 3px rgba(13, 92, 58, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.glass-timepicker-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 220px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(32px) saturate(190%);
+  -webkit-backdrop-filter: blur(32px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 18px;
+  border-bottom-left-radius: 18px;
+  border-bottom-right-radius: 18px;
+  box-shadow: 
+    0 22px 48px -6px rgba(0, 0, 0, 0.18),
+    0 8px 24px -2px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.95);
+  padding: 0.85rem;
+  z-index: 9999;
+  display: none;
+  flex-direction: column;
+  gap: 0.65rem;
+  opacity: 0;
+  transform: translateY(-5px) scale(0.99);
+  transform-origin: top left;
+  transition: opacity 0.16s ease, transform 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+[data-theme="dark"] .glass-timepicker-popover {
+  background: rgba(20, 28, 48, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 
+    0 24px 50px -6px rgba(0, 0, 0, 0.6),
+    0 10px 24px -2px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+}
+
+.glass-timepicker-wrapper.open .glass-timepicker-popover {
+  display: flex;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.glass-time-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.1fr;
+  gap: 0.5rem;
+  height: 185px;
+}
+
+.glass-time-col {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 3px;
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+  scrollbar-width: thin;
+}
+
+[data-theme="dark"] .glass-time-col {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.glass-time-col::-webkit-scrollbar {
+  width: 3px;
+}
+.glass-time-col::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+.glass-time-unit-header,
+.glass-time-col-title {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--primary-800);
+  text-transform: uppercase;
+  text-align: center;
+  padding: 2px 0 4px;
+  letter-spacing: 0.5px;
+  border-bottom: 1px dashed rgba(13, 92, 58, 0.15);
+  margin-bottom: 2px;
+}
+
+.glass-time-presets {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--border-subtle);
+  scrollbar-width: none;
+}
+
+.glass-time-presets::-webkit-scrollbar {
+  display: none;
+}
+
+.glass-time-chip {
+  background: rgba(13, 92, 58, 0.06);
+  border: 1px solid rgba(13, 92, 58, 0.15);
+  border-radius: var(--radius-full);
+  padding: 2px 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--primary-700);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.glass-time-chip:hover {
+  background: var(--primary-700);
+  color: #ffffff;
+  border-color: var(--primary-700);
+}
+
+.glass-timepicker-wrapper.full-width {
+  width: 100%;
+  display: block;
+}
+
+.glass-timepicker-wrapper.full-width .glass-timepicker-toggle {
+  width: 100%;
+  justify-content: space-between;
+}
+
+.glass-time-pill {
+  padding: 0.35rem 0.25rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.14s ease;
+  border: none;
+  background: transparent;
+}
+
+.glass-time-pill:hover {
+  background: rgba(13, 92, 58, 0.12);
+  color: var(--primary-700);
+}
+
+[data-theme="dark"] .glass-time-pill:hover {
+  background: rgba(52, 211, 153, 0.15);
+  color: #34d399;
+}
+
+.glass-time-pill.selected,
+.glass-time-pill.active {
+  background: linear-gradient(135deg, #0d5c3a 0%, #157d50 100%) !important;
+  color: #ffffff !important;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(13, 92, 58, 0.3);
+}
+
+.glass-time-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.4rem;
+  border-top: 1px solid var(--border-subtle);
+  font-size: 0.78rem;
+}
+
+.glass-time-now-btn {
+  background: rgba(13, 92, 58, 0.08);
+  border: 1px solid rgba(13, 92, 58, 0.2);
+  border-radius: var(--radius-full);
+  padding: 3px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--primary-700);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.glass-time-done-btn {
+  background: linear-gradient(135deg, #0d5c3a 0%, #157d50 100%);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 3px 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 6px rgba(13, 92, 58, 0.25);
+}
+
+
+
+

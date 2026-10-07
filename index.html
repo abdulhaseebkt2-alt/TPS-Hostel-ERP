@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0d5c3a">
+  <meta name="description" content="Thaiba Public School – Hostel Integrated Resource & Management Platform (TPS Hostel IRP)">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>TPS Hostel IRP – Thaiba Public School</title>
+
+  <!-- PWA Manifest & App Icon -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="logo.svg">
+  <link rel="apple-touch-icon" href="logo.svg">
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Supabase JS Client CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- CSS Design System -->
+  <link rel="stylesheet" href="variables.css?v=3.0.0">
+  <link rel="stylesheet" href="base.css?v=3.0.0">
+  <link rel="stylesheet" href="components.css?v=3.0.0">
+  <link rel="stylesheet" href="attendance.css?v=3.0.0">
+  <link rel="stylesheet" href="print.css?v=3.0.0">
+  <link rel="stylesheet" href="responsive.css?v=3.0.0">
+</head>
+<body>
+  <div id="app">
+    <!-- Backdrop for Mobile Sidebar -->
+    <div class="sidebar-backdrop" onclick="App.toggleMobileSidebar()"></div>
+
+    <!-- App Sidebar -->
+    <aside class="app-sidebar">
+      <div class="sidebar-header" id="sidebar-header">
+        <div class="sidebar-brand-wrapper" id="sidebar-brand-wrapper" onclick="Auth && Auth.isSuperAdmin() ? App.openEditBrandingModal() : null" style="display:flex; align-items:center; gap:0.75rem; flex:1; min-width:0; cursor:pointer;" title="Institution Branding">
+          <img src="logo.svg" class="sidebar-logo" id="sidebar-brand-logo" alt="Logo">
+          <div class="sidebar-brand-text" style="min-width:0; overflow:hidden;">
+            <h1 id="sidebar-brand-title" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">TPS HOSTEL</h1>
+            <p id="sidebar-brand-subtitle" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">THAIBAPUBLICSCHOOL</p>
+          </div>
+        </div>
+        <button id="sidebar-brand-edit-btn" class="icon-btn superadmin-edit-brand-btn" onclick="event.stopPropagation(); App.openEditBrandingModal();" title="Edit School Name & Logo (Super Admin Only)" style="display:none; width:30px; height:30px; border-radius:8px; border:1px solid rgba(13,92,58,0.2); background:rgba(13,92,58,0.08); color:var(--primary-700); flex-shrink:0; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s ease;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+        </button>
+      </div>
+      <script>
+        (function() {
+          try {
+            var raw = localStorage.getItem('tps_branding_config');
+            if (raw) {
+              var b = JSON.parse(raw);
+              if (b.appName) document.getElementById('sidebar-brand-title').textContent = b.appName;
+              if (b.schoolName) document.getElementById('sidebar-brand-subtitle').textContent = b.schoolName;
+              if (b.logoUrl) document.getElementById('sidebar-brand-logo').src = b.logoUrl;
+            }
+          } catch(e) {}
+        })();
+      </script>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Core Management</div>
+        <a class="nav-item active" data-route="dashboard" onclick="App.navigateTo('dashboard')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Dashboard
+        </a>
+        <a class="nav-item" data-route="students" onclick="App.navigateTo('students')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          Students & Admissions
+        </a>
+        <a class="nav-item" data-route="staff" onclick="App.navigateTo('staff')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
+          Staff & Teachers
+        </a>
+        <a class="nav-item" data-route="attendance" onclick="App.navigateTo('attendance')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+          Attendance Engine
+        </a>
+        <a class="nav-item" data-route="leave" onclick="App.navigateTo('leave')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          Leave & Return Pass
+        </a>
+        <a class="nav-item" data-route="discipline" onclick="App.navigateTo('discipline')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          Discipline & Fines
+        </a>
+
+        <div class="nav-section-title">Hostel & Academics</div>
+        <a class="nav-item" data-route="hostel" onclick="App.navigateTo('hostel')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+          Hostels & Beds
+        </a>
+        <a class="nav-item" data-route="timetable" onclick="App.navigateTo('timetable')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          Timetables & Coaching
+        </a>
+        <a class="nav-item" data-route="notices" onclick="App.navigateTo('notices')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+          Notices & Broadcasts
+        </a>
+        <a class="nav-item" data-route="reports" onclick="App.navigateTo('reports')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+          Report Center
+        </a>
+
+        <div class="nav-section-title">Super Admin & Governance</div>
+        <a class="nav-item" data-route="users" onclick="App.navigateTo('users')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          Users & Role Approvals
+        </a>
+        <a class="nav-item" data-route="settings" onclick="App.navigateTo('settings')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          Settings & Audits
+        </a>
+      </nav>
+
+      <div class="sidebar-footer" id="sidebar-user-footer" onclick="App.openEditProfileModal()" style="cursor:pointer;" title="Click to view & edit your profile">
+        <div class="sidebar-user-avatar" id="sidebar-user-avatar">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23e2e8f0'/%3E%3Ccircle cx='50' cy='38' r='18' fill='%2394a3b8'/%3E%3Cpath d='M22 88 c0 -18 14 -28 28 -28 s28 10 28 28 Z' fill='%2394a3b8'/%3E%3C/svg%3E" alt="Avatar">
+        </div>
+        <div class="sidebar-user-info" style="flex:1; min-width:0;">
+          <div class="user-name" id="sidebar-user-name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Abdul Haseeb</div>
+          <div class="user-role-badge" id="sidebar-user-role">Super Admin</div>
+        </div>
+        <button class="icon-btn" style="border:none; color:var(--accent-gold-400); width:28px; height:28px; border-radius:6px; flex-shrink:0;" onclick="event.stopPropagation(); App.openLoginModal()" title="Switch Account / Sign In">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Frame -->
+    <main class="app-main">
+      <!-- Top App Header -->
+      <header class="app-header">
+        <div class="header-left">
+          <button class="header-mobile-toggle" onclick="App.toggleMobileSidebar()" aria-label="Toggle navigation">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <div class="header-search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" placeholder="Global search students, timetable, staff..." oninput="App.handleGlobalHeaderSearch(this.value)">
+          </div>
+        </div>
+
+        <div class="header-right">
+          <!-- Theme Toggle -->
+          <button class="icon-btn" onclick="App.toggleTheme()" title="Toggle Dark/Light Mode">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          </button>
+
+          <!-- Notifications -->
+          <button class="icon-btn" onclick="App.navigateTo('notices')" title="Notifications & Notices">
+            <span class="badge-dot"></span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Dynamic View Container -->
+      <div class="view-container" id="main-view-container">
+        <!-- Rendered dynamically by AppController -->
+      </div>
+    </main>
+
+    <!-- Mobile Bottom Navigation Bar -->
+    <div class="mobile-bottom-nav">
+      <div class="mobile-bottom-nav-inner">
+        <a class="mob-nav-item active" data-route="dashboard" onclick="App.navigateTo('dashboard')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          <span>Home</span>
+        </a>
+        <a class="mob-nav-item" data-route="students" onclick="App.navigateTo('students')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+          <span>Students</span>
+        </a>
+        <a class="mob-nav-item" data-route="attendance" onclick="App.navigateTo('attendance')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+          <span>Attendance</span>
+        </a>
+        <a class="mob-nav-item" data-route="users" onclick="App.navigateTo('users')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+          <span>Users</span>
+        </a>
+        <a class="mob-nav-item" data-route="settings" onclick="App.navigateTo('settings')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          <span>Settings</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reusable Modal Window -->
+  <div class="modal-overlay" id="app-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-title">Modal Title</h3>
+        <button class="icon-btn" onclick="App.closeModal()" aria-label="Close modal">✕</button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <!-- Dynamic Modal Body Content -->
+      </div>
+      <div class="modal-footer" id="modal-footer">
+        <button class="btn btn-secondary" onclick="App.closeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container"></div>
+
+  <!-- Load Scripts in Dependency Order -->
+  <script src="config.js?v=3.0.0"></script>
+  <script src="supabase-client.js?v=3.0.0"></script>
+  <script src="auth.js?v=3.0.0"></script>
+  <script src="student-service.js?v=3.0.0"></script>
+  <script src="staff-service.js?v=3.0.0"></script>
+  <script src="attendance-service.js?v=3.0.0"></script>
+  <script src="leave-service.js?v=3.0.0"></script>
+  <script src="discipline-service.js?v=3.0.0"></script>
+  <script src="timetable-service.js?v=3.0.0"></script>
+  <script src="hostel-service.js?v=3.0.0"></script>
+  <script src="report-service.js?v=3.0.0"></script>
+
+  <!-- Views -->
+  <script src="dashboard-view.js?v=3.0.0"></script>
+  <script src="students-view.js?v=3.0.0"></script>
+  <script src="staff-view.js?v=3.0.0"></script>
+  <script src="attendance-view.js?v=3.0.0"></script>
+  <script src="leave-view.js?v=3.0.0"></script>
+  <script src="discipline-view.js?v=3.0.0"></script>
+  <script src="hostel-view.js?v=3.0.0"></script>
+  <script src="timetable-view.js?v=3.0.0"></script>
+  <script src="reports-view.js?v=3.0.0"></script>
+  <script src="notices-view.js?v=3.0.0"></script>
+  <script src="users-view.js?v=3.0.0"></script>
+  <script src="settings-view.js?v=3.0.0"></script>
+
+  <!-- App Controller -->
+  <script src="app.js?v=3.0.0"></script>
+</body>
+</html>
