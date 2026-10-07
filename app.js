@@ -4705,7 +4705,7 @@ class AppController {
             ${students.map(s => `
               <label class="group-student-item" data-student-id="${s.id}" data-name="${s.full_name.toLowerCase()}" data-admission="${(s.admission_no || '').toLowerCase()}" data-class="${s.school_class}" data-gender="${s.gender}" style="display:flex; align-items:center; gap:0.75rem; padding:0.45rem 0.75rem; border-bottom:1px solid var(--border-subtle); cursor:pointer;">
                 <input type="checkbox" name="selected_student_ids" value="${s.id}" onchange="App.updateGroupSelectedCounter()" style="width:16px; height:16px; accent-color:var(--primary-600); cursor:pointer;">
-                <img src="${s.photo_url}" style="width:28px; height:28px; border-radius:var(--radius-full); object-fit:cover; border:1.5px solid var(--border-color);" alt="photo">
+                <img src="${typeof CONFIG !== 'undefined' ? CONFIG.getStudentPhoto(s) : (s.photo_url || '')}" style="width:28px; height:28px; border-radius:var(--radius-full); object-fit:cover; border:1.5px solid var(--border-color);" alt="photo" onerror="this.src=(typeof CONFIG !== 'undefined' ? CONFIG.DEFAULT_STUDENT_PHOTO : '')">
                 <div style="flex:1; min-width:0;">
                   <div style="display:flex; align-items:center; gap:6px;">
                     <strong style="font-size:0.85rem; color:var(--text-primary);">${s.full_name}</strong>
@@ -4825,7 +4825,7 @@ class AppController {
               return `
                 <label class="group-student-item" data-student-id="${s.id}" data-name="${s.full_name.toLowerCase()}" data-admission="${(s.admission_no || '').toLowerCase()}" data-class="${s.school_class}" data-gender="${s.gender}" style="display:flex; align-items:center; gap:0.75rem; padding:0.45rem 0.75rem; border-bottom:1px solid var(--border-subtle); cursor:pointer;">
                   <input type="checkbox" name="selected_student_ids" value="${s.id}" ${isChecked ? 'checked' : ''} onchange="App.updateGroupSelectedCounter()" style="width:16px; height:16px; accent-color:var(--primary-600); cursor:pointer;">
-                  <img src="${s.photo_url}" style="width:28px; height:28px; border-radius:var(--radius-full); object-fit:cover; border:1.5px solid var(--border-color);" alt="photo">
+                  <img src="${typeof CONFIG !== 'undefined' ? CONFIG.getStudentPhoto(s) : (s.photo_url || '')}" style="width:28px; height:28px; border-radius:var(--radius-full); object-fit:cover; border:1.5px solid var(--border-color);" alt="photo" onerror="this.src=(typeof CONFIG !== 'undefined' ? CONFIG.DEFAULT_STUDENT_PHOTO : '')">
                   <div style="flex:1; min-width:0;">
                     <div style="display:flex; align-items:center; gap:6px;">
                       <strong style="font-size:0.85rem; color:var(--text-primary);">${s.full_name}</strong>
@@ -4917,7 +4917,7 @@ class AppController {
             return `
               <label class="group-student-item" data-student-id="${s.id}" data-name="${s.full_name.toLowerCase()}" data-admission="${(s.admission_no || '').toLowerCase()}" data-class="${s.school_class}" data-gender="${s.gender}" style="display:flex; align-items:center; gap:0.75rem; padding:0.55rem 0.85rem; border-bottom:1px solid var(--border-subtle); cursor:pointer;">
                 <input type="checkbox" name="selected_student_ids" value="${s.id}" ${isChecked ? 'checked' : ''} onchange="App.updateGroupSelectedCounter()" style="width:17px; height:17px; accent-color:var(--primary-600); cursor:pointer;">
-                <img src="${s.photo_url}" style="width:34px; height:34px; border-radius:var(--radius-full); object-fit:cover; border:1.5px solid var(--border-color);" alt="photo">
+                <img src="${typeof CONFIG !== 'undefined' ? CONFIG.getStudentPhoto(s) : (s.photo_url || '')}" style="width:34px; height:34px; border-radius:var(--radius-full); object-fit:cover; border:1.5px solid var(--border-color);" alt="photo" onerror="this.src=(typeof CONFIG !== 'undefined' ? CONFIG.DEFAULT_STUDENT_PHOTO : '')">
                 <div style="flex:1; min-width:0;">
                   <div style="display:flex; align-items:center; gap:6px;">
                     <strong style="font-size:0.88rem; color:var(--text-primary);">${s.full_name}</strong>
@@ -6556,7 +6556,7 @@ class AppController {
     const bodyHtml = `
       <!-- Header Banner -->
       <div style="display:flex; align-items:center; gap:1.25rem; margin-bottom:1.5rem; padding-bottom:1.25rem; border-bottom:1px solid var(--border-color);">
-        <img src="${student.photo_url}" style="width:84px; height:84px; border-radius:var(--radius-md); object-fit:cover; border:3px solid var(--primary-600); box-shadow:var(--shadow-md);" alt="Photo">
+        <img src="${typeof CONFIG !== 'undefined' ? CONFIG.getStudentPhoto(student) : (student.photo_url || '')}" style="width:84px; height:84px; border-radius:var(--radius-md); object-fit:cover; border:3px solid var(--primary-600); box-shadow:var(--shadow-md);" alt="Photo" onerror="this.src=(typeof CONFIG !== 'undefined' ? CONFIG.DEFAULT_STUDENT_PHOTO : '')">
         <div>
           <h3 style="font-size:1.4rem; color:var(--text-primary); font-weight:800; margin-bottom:3px;">${student.full_name}</h3>
           <div style="font-size:0.88rem; color:var(--text-muted); display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
@@ -7281,11 +7281,11 @@ class AppController {
     const bodyHtml = `
       <div class="id-card-container">
         <div class="id-card-header">
-          <img src="${branding.logoUrl}" style="height:36px; max-width:140px; object-fit:contain; margin-bottom:2px;" alt="${branding.schoolName}">
+          <img src="${branding.logoUrl}" onerror="this.src='logo.svg'" style="height:36px; max-width:140px; object-fit:contain; margin-bottom:2px;" alt="${branding.schoolName}">
           <h3>${branding.schoolName}</h3>
           <p>${branding.appName} RESIDENT IDENTITY CARD</p>
         </div>
-        <img src="${student.photo_url}" class="id-card-photo" alt="Photo">
+        <img src="${typeof CONFIG !== 'undefined' ? CONFIG.getStudentPhoto(student) : (student.photo_url || '')}" onerror="this.src=(typeof CONFIG !== 'undefined' ? CONFIG.DEFAULT_STUDENT_PHOTO : '')" class="id-card-photo" alt="Photo">
         <div class="id-card-name">${student.full_name}</div>
         <div class="id-card-adm">${student.admission_no}</div>
         <div class="id-card-details">
@@ -7315,7 +7315,7 @@ class AppController {
     const bodyHtml = `
       <div class="fine-slip-sheet">
         <div class="fine-slip-header">
-          <img src="${branding.logoUrl}" class="fine-slip-logo" alt="${branding.schoolName}">
+          <img src="${branding.logoUrl}" onerror="this.src='logo.svg'" class="fine-slip-logo" alt="${branding.schoolName}">
           <div class="fine-slip-title">
             <h2>${branding.schoolName}</h2>
             <p>${branding.appName} DISCIPLINE & FINE SLIP • ${fine.fine_no}</p>

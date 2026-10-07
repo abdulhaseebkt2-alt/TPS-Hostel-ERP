@@ -178,7 +178,7 @@ class StudentsView {
                       <tr>
                         <td>
                           <div class="table-user-cell">
-                            <img src="${(s.photo_url && !s.photo_url.includes('unsplash.com')) ? s.photo_url : (typeof CONFIG !== 'undefined' ? CONFIG.DEFAULT_STUDENT_PHOTO : '')}" class="table-avatar" alt="Photo" onerror="this.src=(typeof CONFIG !== 'undefined' ? CONFIG.DEFAULT_STUDENT_PHOTO : '')">
+                            <img src="${typeof CONFIG !== 'undefined' ? CONFIG.getStudentPhoto(s) : (s.photo_url || '')}" class="table-avatar" alt="Photo" onerror="this.src=(typeof CONFIG !== 'undefined' ? CONFIG.DEFAULT_STUDENT_PHOTO : '')">
                             <div>
                               <div class="table-user-name" style="cursor:pointer; color:var(--primary-700); font-weight:700;" onclick="App.openStudentProfile('${s.id}')">
                                 ${s.full_name}

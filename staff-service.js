@@ -99,7 +99,7 @@ class StaffService {
       gender: data.gender || 'male',
       status: data.status || 'active',
       joining_date: data.joining_date || new Date().toISOString().split('T')[0],
-      avatar_url: data.avatar_url || (typeof CONFIG !== 'undefined' ? CONFIG.DEFAULT_AVATAR : ''),
+      avatar_url: data.avatar_url || (typeof CONFIG !== 'undefined' ? CONFIG.getStaffPhoto(data) : ''),
       address: data.address || '',
       remarks: data.remarks || '',
       created_at: new Date().toISOString()

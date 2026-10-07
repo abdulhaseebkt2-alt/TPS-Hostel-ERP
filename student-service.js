@@ -91,7 +91,7 @@ class StudentService {
     studentData.school_admission_date = studentData.school_admission_date || studentData.admission_date || new Date().toISOString().split('T')[0];
     studentData.hostel_admission_date = studentData.hostel_admission_date || studentData.admission_date || new Date().toISOString().split('T')[0];
     studentData.admission_date = studentData.hostel_admission_date;
-    studentData.photo_url = studentData.photo_url || (typeof CONFIG !== 'undefined' ? CONFIG.DEFAULT_STUDENT_PHOTO : '');
+    studentData.photo_url = studentData.photo_url || (typeof CONFIG !== 'undefined' ? CONFIG.getStudentPhoto(studentData) : '');
 
     const newStudent = await db.insertRecord('students', studentData);
 

@@ -254,7 +254,7 @@ class UsersView {
                     <tr>
                       <td>
                         <div class="table-user-cell">
-                          <img src="${(item.avatar_url && !item.avatar_url.includes('unsplash.com')) ? item.avatar_url : (typeof CONFIG !== 'undefined' ? CONFIG.DEFAULT_AVATAR : '')}" class="table-avatar" alt="avatar">
+                          <img src="${(item.avatar_url && !item.avatar_url.includes('unsplash.com')) ? item.avatar_url : (typeof CONFIG !== 'undefined' ? CONFIG.DEFAULT_AVATAR : '')}" class="table-avatar" alt="avatar" onerror="this.src=(typeof CONFIG !== 'undefined' ? CONFIG.DEFAULT_AVATAR : '')">
                           <div>
                             <div class="table-user-name">${item.full_name}</div>
                             <div class="table-user-sub">

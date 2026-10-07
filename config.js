@@ -9,9 +9,29 @@ const CONFIG = {
   VERSION: '1.1.0',
   MOTTO: 'Modern Education with Morality',
 
-  // Default SVG Avatars (Clean Silhouette Placeholders - No Stock/Dummy Photos)
-  DEFAULT_AVATAR: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23e2e8f0'/%3E%3Ccircle cx='50' cy='38' r='18' fill='%2394a3b8'/%3E%3Cpath d='M22 88 c0 -18 14 -28 28 -28 s28 10 28 28 Z' fill='%2394a3b8'/%3E%3C/svg%3E",
-  DEFAULT_STUDENT_PHOTO: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23e2e8f0'/%3E%3Ccircle cx='50' cy='38' r='18' fill='%2394a3b8'/%3E%3Cpath d='M22 88 c0 -18 14 -28 28 -28 s28 10 28 28 Z' fill='%2394a3b8'/%3E%3C/svg%3E",
+  // Default SVG Avatars (Clean Silhouette Placeholders - No External Links Needed)
+  DEFAULT_AVATAR: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f1f5f9'/%3E%3Ccircle cx='50' cy='36' r='17' fill='%2364748b'/%3E%3Cpath d='M22 88 c0 -17 13 -26 28 -26 s28 9 28 26 Z' fill='%2364748b'/%3E%3C/svg%3E",
+  DEFAULT_STUDENT_PHOTO: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23e0f2fe'/%3E%3Ccircle cx='50' cy='36' r='17' fill='%230284c7'/%3E%3Cpath d='M22 88 c0 -17 13 -26 28 -26 s28 9 28 26 Z' fill='%230284c7'/%3E%3C/svg%3E",
+  DEFAULT_BOY_PHOTO: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23e0f2fe'/%3E%3Ccircle cx='50' cy='36' r='17' fill='%230284c7'/%3E%3Cpath d='M22 88 c0 -17 13 -26 28 -26 s28 9 28 26 Z' fill='%230284c7'/%3E%3C/svg%3E",
+  DEFAULT_GIRL_PHOTO: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23fce7f3'/%3E%3Ccircle cx='50' cy='36' r='17' fill='%23db2777'/%3E%3Cpath d='M22 88 c0 -17 13 -26 28 -26 s28 9 28 26 Z' fill='%23db2777'/%3E%3C/svg%3E",
+  DEFAULT_MALE_TEACHER: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23ecfdf5'/%3E%3Ccircle cx='50' cy='36' r='17' fill='%23059669'/%3E%3Cpath d='M22 88 c0 -17 13 -26 28 -26 s28 9 28 26 Z' fill='%23059669'/%3E%3C/svg%3E",
+  DEFAULT_FEMALE_TEACHER: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f5f3ff'/%3E%3Ccircle cx='50' cy='36' r='17' fill='%237c3aed'/%3E%3Cpath d='M22 88 c0 -17 13 -26 28 -26 s28 9 28 26 Z' fill='%237c3aed'/%3E%3C/svg%3E",
+
+  getStudentPhoto(student) {
+    if (student && student.photo_url && student.photo_url.trim() && !student.photo_url.includes('unsplash.com')) {
+      return student.photo_url;
+    }
+    const isGirl = student && (student.gender === 'female' || student.gender === 'girl' || student.gender === 'girls');
+    return isGirl ? this.DEFAULT_GIRL_PHOTO : this.DEFAULT_BOY_PHOTO;
+  },
+
+  getStaffPhoto(staff) {
+    if (staff && staff.avatar_url && staff.avatar_url.trim() && !staff.avatar_url.includes('unsplash.com')) {
+      return staff.avatar_url;
+    }
+    const isFemale = staff && (staff.gender === 'female' || (staff.full_name && (staff.full_name.includes('Maryam') || staff.full_name.includes('Fatima') || staff.full_name.includes('Usthaza'))));
+    return isFemale ? this.DEFAULT_FEMALE_TEACHER : this.DEFAULT_MALE_TEACHER;
+  },
 
   // Institutional Branding Defaults
   DEFAULT_BRANDING: {
@@ -28,7 +48,12 @@ const CONFIG = {
       if (typeof localStorage !== 'undefined' && localStorage.getItem) {
         const saved = localStorage.getItem('tps_branding_config');
         if (saved) {
-          return { ...this.DEFAULT_BRANDING, ...JSON.parse(saved) };
+          const parsed = JSON.parse(saved);
+          if (parsed.logoUrl && (parsed.logoUrl.startsWith('assets/') || parsed.logoUrl.includes('assets/icons/'))) {
+            parsed.logoUrl = 'logo.svg';
+            try { localStorage.setItem('tps_branding_config', JSON.stringify({ ...this.DEFAULT_BRANDING, ...parsed })); } catch (e) {}
+          }
+          return { ...this.DEFAULT_BRANDING, ...parsed };
         }
       }
     } catch (e) {

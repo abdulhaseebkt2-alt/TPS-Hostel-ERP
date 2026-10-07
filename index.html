@@ -12,7 +12,8 @@
   <!-- PWA Manifest & App Icon -->
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/svg+xml" href="logo.svg">
-  <link rel="apple-touch-icon" href="logo.svg">
+  <link rel="alternate icon" type="image/png" href="logo.png">
+  <link rel="apple-touch-icon" href="logo.png">
 
   <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,12 +24,12 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <!-- CSS Design System -->
-  <link rel="stylesheet" href="variables.css?v=3.0.0">
-  <link rel="stylesheet" href="base.css?v=3.0.0">
-  <link rel="stylesheet" href="components.css?v=3.0.0">
-  <link rel="stylesheet" href="attendance.css?v=3.0.0">
-  <link rel="stylesheet" href="print.css?v=3.0.0">
-  <link rel="stylesheet" href="responsive.css?v=3.0.0">
+  <link rel="stylesheet" href="variables.css?v=3.0.1">
+  <link rel="stylesheet" href="base.css?v=3.0.1">
+  <link rel="stylesheet" href="components.css?v=3.0.1">
+  <link rel="stylesheet" href="attendance.css?v=3.0.1">
+  <link rel="stylesheet" href="print.css?v=3.0.1">
+  <link rel="stylesheet" href="responsive.css?v=3.0.1">
 </head>
 <body>
   <div id="app">
@@ -39,7 +40,7 @@
     <aside class="app-sidebar">
       <div class="sidebar-header" id="sidebar-header">
         <div class="sidebar-brand-wrapper" id="sidebar-brand-wrapper" onclick="Auth && Auth.isSuperAdmin() ? App.openEditBrandingModal() : null" style="display:flex; align-items:center; gap:0.75rem; flex:1; min-width:0; cursor:pointer;" title="Institution Branding">
-          <img src="logo.svg" class="sidebar-logo" id="sidebar-brand-logo" alt="Logo">
+          <img src="logo.svg" class="sidebar-logo" id="sidebar-brand-logo" alt="Logo" onerror="this.src='logo.svg'">
           <div class="sidebar-brand-text" style="min-width:0; overflow:hidden;">
             <h1 id="sidebar-brand-title" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">TPS HOSTEL</h1>
             <p id="sidebar-brand-subtitle" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">THAIBAPUBLICSCHOOL</p>
@@ -57,7 +58,11 @@
               var b = JSON.parse(raw);
               if (b.appName) document.getElementById('sidebar-brand-title').textContent = b.appName;
               if (b.schoolName) document.getElementById('sidebar-brand-subtitle').textContent = b.schoolName;
-              if (b.logoUrl) document.getElementById('sidebar-brand-logo').src = b.logoUrl;
+              if (b.logoUrl) {
+                var lUrl = b.logoUrl;
+                if (lUrl.indexOf('assets/') === 0 || lUrl.indexOf('assets/icons/') !== -1) lUrl = 'logo.svg';
+                document.getElementById('sidebar-brand-logo').src = lUrl;
+              }
             }
           } catch(e) {}
         })();
@@ -214,33 +219,33 @@
   <div id="toast-container"></div>
 
   <!-- Load Scripts in Dependency Order -->
-  <script src="config.js?v=3.0.0"></script>
-  <script src="supabase-client.js?v=3.0.0"></script>
-  <script src="auth.js?v=3.0.0"></script>
-  <script src="student-service.js?v=3.0.0"></script>
-  <script src="staff-service.js?v=3.0.0"></script>
-  <script src="attendance-service.js?v=3.0.0"></script>
-  <script src="leave-service.js?v=3.0.0"></script>
-  <script src="discipline-service.js?v=3.0.0"></script>
-  <script src="timetable-service.js?v=3.0.0"></script>
-  <script src="hostel-service.js?v=3.0.0"></script>
-  <script src="report-service.js?v=3.0.0"></script>
+  <script src="config.js?v=3.0.1"></script>
+  <script src="supabase-client.js?v=3.0.1"></script>
+  <script src="auth.js?v=3.0.1"></script>
+  <script src="student-service.js?v=3.0.1"></script>
+  <script src="staff-service.js?v=3.0.1"></script>
+  <script src="attendance-service.js?v=3.0.1"></script>
+  <script src="leave-service.js?v=3.0.1"></script>
+  <script src="discipline-service.js?v=3.0.1"></script>
+  <script src="timetable-service.js?v=3.0.1"></script>
+  <script src="hostel-service.js?v=3.0.1"></script>
+  <script src="report-service.js?v=3.0.1"></script>
 
   <!-- Views -->
-  <script src="dashboard-view.js?v=3.0.0"></script>
-  <script src="students-view.js?v=3.0.0"></script>
-  <script src="staff-view.js?v=3.0.0"></script>
-  <script src="attendance-view.js?v=3.0.0"></script>
-  <script src="leave-view.js?v=3.0.0"></script>
-  <script src="discipline-view.js?v=3.0.0"></script>
-  <script src="hostel-view.js?v=3.0.0"></script>
-  <script src="timetable-view.js?v=3.0.0"></script>
-  <script src="reports-view.js?v=3.0.0"></script>
-  <script src="notices-view.js?v=3.0.0"></script>
-  <script src="users-view.js?v=3.0.0"></script>
-  <script src="settings-view.js?v=3.0.0"></script>
+  <script src="dashboard-view.js?v=3.0.1"></script>
+  <script src="students-view.js?v=3.0.1"></script>
+  <script src="staff-view.js?v=3.0.1"></script>
+  <script src="attendance-view.js?v=3.0.1"></script>
+  <script src="leave-view.js?v=3.0.1"></script>
+  <script src="discipline-view.js?v=3.0.1"></script>
+  <script src="hostel-view.js?v=3.0.1"></script>
+  <script src="timetable-view.js?v=3.0.1"></script>
+  <script src="reports-view.js?v=3.0.1"></script>
+  <script src="notices-view.js?v=3.0.1"></script>
+  <script src="users-view.js?v=3.0.1"></script>
+  <script src="settings-view.js?v=3.0.1"></script>
 
   <!-- App Controller -->
-  <script src="app.js?v=3.0.0"></script>
+  <script src="app.js?v=3.0.1"></script>
 </body>
 </html>

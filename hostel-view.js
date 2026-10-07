@@ -239,7 +239,7 @@ class HostelView {
 
                                     ${isOccupied ? `
                                       <div style="display: flex; align-items: center; gap: 5px; margin: 3px 0;">
-                                        <img src="${student.photo_url}" style="width: 22px; height: 22px; border-radius: var(--radius-full); object-fit: cover; border: 1px solid var(--primary-600);" alt="photo">
+                                        <img src="${typeof CONFIG !== 'undefined' ? CONFIG.getStudentPhoto(student) : (student.photo_url || '')}" style="width: 22px; height: 22px; border-radius: var(--radius-full); object-fit: cover; border: 1px solid var(--primary-600);" alt="photo" onerror="this.src=(typeof CONFIG !== 'undefined' ? CONFIG.DEFAULT_STUDENT_PHOTO : '')">
                                         <div style="overflow: hidden;">
                                           <div style="font-size: 0.78rem; font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                             ${student.full_name}
@@ -312,7 +312,7 @@ class HostelView {
                     <tr>
                       <td>
                         <div class="table-user-cell">
-                          <img src="${student ? student.photo_url : ''}" class="table-avatar" alt="Photo">
+                          <img src="${typeof CONFIG !== 'undefined' ? CONFIG.getStudentPhoto(student) : (student?.photo_url || '')}" class="table-avatar" alt="Photo" onerror="this.src=(typeof CONFIG !== 'undefined' ? CONFIG.DEFAULT_STUDENT_PHOTO : '')">
                           <div>
                             <div class="table-user-name">${student ? student.full_name : 'Student'}</div>
                             <div class="table-user-sub">${student ? student.admission_no : ''}</div>

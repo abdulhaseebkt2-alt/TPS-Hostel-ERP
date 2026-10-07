@@ -231,7 +231,7 @@ class StaffView {
                 <div class="card-body" style="padding:1.25rem;">
                   <!-- Top Row: Avatar & Details -->
                   <div style="display:flex; gap:1rem; align-items:flex-start;">
-                    <img src="${(s.avatar_url && !s.avatar_url.includes('unsplash.com')) ? s.avatar_url : (typeof CONFIG !== 'undefined' ? CONFIG.DEFAULT_AVATAR : '')}" style="width:58px; height:58px; border-radius:var(--radius-full); object-fit:cover; border:2.5px solid var(--primary-600); flex-shrink:0; box-shadow:var(--shadow-sm);" alt="${s.full_name}">
+                    <img src="${typeof CONFIG !== 'undefined' ? CONFIG.getStaffPhoto(s) : (s.avatar_url || '')}" style="width:58px; height:58px; border-radius:var(--radius-full); object-fit:cover; border:2.5px solid var(--primary-600); flex-shrink:0; box-shadow:var(--shadow-sm);" alt="${s.full_name}" onerror="this.src=(typeof CONFIG !== 'undefined' ? CONFIG.DEFAULT_AVATAR : '')">
                     <div style="flex:1; min-width:0;">
                       <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.4rem;">
                         <h4 style="margin:0; font-size:1.05rem; color:var(--text-primary); font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
@@ -366,7 +366,7 @@ class StaffView {
                     <tr>
                       <td>
                         <div style="display:flex; align-items:center; gap:0.65rem;">
-                          <img src="${(s.avatar_url && !s.avatar_url.includes('unsplash.com')) ? s.avatar_url : (typeof CONFIG !== 'undefined' ? CONFIG.DEFAULT_AVATAR : '')}" style="width:36px; height:36px; border-radius:var(--radius-full); object-fit:cover; border:1.5px solid var(--border-color);" alt="avatar">
+                          <img src="${typeof CONFIG !== 'undefined' ? CONFIG.getStaffPhoto(s) : (s.avatar_url || '')}" style="width:36px; height:36px; border-radius:var(--radius-full); object-fit:cover; border:1.5px solid var(--border-color);" alt="avatar" onerror="this.src=(typeof CONFIG !== 'undefined' ? CONFIG.DEFAULT_AVATAR : '')">
                           <div>
                             <strong style="color:var(--text-primary); font-size:0.9rem;">${s.full_name}</strong>
                             <div style="font-size:0.75rem; color:var(--text-muted);">${s.qualification || 'Faculty'}</div>
