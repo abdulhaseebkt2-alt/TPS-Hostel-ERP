@@ -1,5 +1,5 @@
 // TPS Hostel IRP Service Worker
-const CACHE_NAME = 'tps-hostel-irp-v3.1';
+const CACHE_NAME = 'tps-hostel-irp-v3.2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -38,6 +38,7 @@ const ASSETS_TO_CACHE = [
   './app.js'
 ];
 
+// Install Event
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -46,6 +47,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
+// Activate Event
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
@@ -56,32 +58,69 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+// Fetch Event
 self.addEventListener('fetch', (event) => {
-  // Let Supabase API requests pass through network directly
-  if (event.request.url.includes('supabase.co')) {
+  const url = event.request.url;
+
+  // 1. Only handle GET requests
+  if (event.request.method !== 'GET') {
     return;
   }
 
+  // 2. Ignore non-http protocols (e.g. chrome-extension://, data:, blob:)
+  if (!url.startsWith('http')) {
+    return;
+  }
+
+  // 3. Bypass external APIs, Supabase, Google Analytics, and 3rd party trackers
+  if (
+    url.includes('supabase.co') ||
+    url.includes('google-analytics.com') ||
+    url.includes('googletagmanager.com') ||
+    url.includes('doubleclick.net')
+  ) {
+    return;
+  }
+
+  // 4. Cache-first strategy for local assets with safe fallbacks
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
         return cachedResponse;
       }
-      return fetch(event.request).then((networkResponse) => {
-        if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
+
+      return fetch(event.request)
+        .then((networkResponse) => {
+          // If not a valid response, return it directly
+          if (!networkResponse || networkResponse.status !== 200) {
+            return networkResponse;
+          }
+
+          // Cache valid local GET responses
+          if (networkResponse.type === 'basic' || networkResponse.type === 'cors') {
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache).catch(() => {});
+            });
+          }
+
           return networkResponse;
-        }
-        const responseToCache = networkResponse.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
+        })
+        .catch(async () => {
+          // Fallback for HTML navigation requests
+          const acceptHeader = event.request.headers.get('accept') || '';
+          if (acceptHeader.includes('text/html')) {
+            const indexCached = await caches.match('./index.html');
+            if (indexCached) return indexCached;
+          }
+
+          // Return a safe offline Response to avoid "Failed to convert value to 'Response'"
+          return new Response('Network unavailable or offline.', {
+            status: 503,
+            statusText: 'Service Unavailable',
+            headers: new Headers({ 'Content-Type': 'text/plain' })
+          });
         });
-        return networkResponse;
-      }).catch(() => {
-        // Fallback for html pages
-        if (event.request.headers.get('accept') && event.request.headers.get('accept').includes('text/html')) {
-          return caches.match('./index.html');
-        }
-      });
     })
   );
 });
