@@ -25,6 +25,13 @@ class DataManager {
         this.client = window.supabase.createClient(CONFIG.SUPABASE_URL, anonKey);
         this.useSupabase = true;
         console.log('[TPS IRP] Connected to live Supabase backend:', CONFIG.SUPABASE_URL);
+        
+        // Auto-sync any unsynced local Base64 photos to Supabase Storage bucket in the background
+        setTimeout(() => {
+          this.syncAllPhotosToSupabaseStorage().catch(err => {
+            console.warn('[Background Photo Sync]', err.message);
+          });
+        }, 3000);
       } catch (err) {
         console.warn('[TPS IRP] Failed to initialize Supabase client, using local cache engine:', err);
         this.useSupabase = false;
@@ -665,6 +672,167 @@ class DataManager {
     }
   }
 
+  // Convert Data URL (Base64) to Blob for binary upload to Supabase Storage
+  dataUrlToBlob(dataUrl) {
+    if (!dataUrl || typeof dataUrl !== 'string' || !dataUrl.startsWith('data:')) return null;
+    try {
+      const parts = dataUrl.split(',');
+      const mimeMatch = parts[0].match(/:(.*?);/);
+      const mime = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+      const bstr = atob(parts[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      return new Blob([u8arr], { type: mime });
+    } catch (e) {
+      console.warn('[DataUrlToBlob Conversion Failed]', e);
+      return null;
+    }
+  }
+
+  // Upload Photo or Base64 Data URL to Supabase Storage Bucket ('photos' or 'hostel-documents')
+  async uploadPhoto(fileOrDataUrl, folder = 'students', customName = null) {
+    if (!fileOrDataUrl) return null;
+
+    // If it's already an HTTP / Supabase public URL or SVG data, return as-is
+    if (typeof fileOrDataUrl === 'string' && (fileOrDataUrl.startsWith('http://') || fileOrDataUrl.startsWith('https://'))) {
+      return fileOrDataUrl;
+    }
+
+    if (!this.useSupabase || !this.client) {
+      return typeof fileOrDataUrl === 'string' ? fileOrDataUrl : null;
+    }
+
+    try {
+      let blob = null;
+      let extension = 'jpg';
+      let contentType = 'image/jpeg';
+
+      if (typeof fileOrDataUrl === 'string' && fileOrDataUrl.startsWith('data:')) {
+        blob = this.dataUrlToBlob(fileOrDataUrl);
+        if (blob) {
+          contentType = blob.type;
+          extension = blob.type.split('/')[1] || 'jpg';
+          if (extension === 'jpeg') extension = 'jpg';
+          if (extension.includes('+')) extension = extension.split('+')[0];
+        }
+      } else if (fileOrDataUrl instanceof Blob || fileOrDataUrl instanceof File) {
+        blob = fileOrDataUrl;
+        contentType = blob.type || 'image/jpeg';
+        extension = contentType.split('/')[1] || 'jpg';
+      }
+
+      if (!blob) return typeof fileOrDataUrl === 'string' ? fileOrDataUrl : null;
+
+      const safeFolder = folder || 'general';
+      const safeCustom = customName ? String(customName).replace(/[^a-zA-Z0-9_-]/g, '_') : null;
+      const fileName = safeCustom ? `${safeCustom}_${Date.now()}.${extension}` : `${safeFolder}_${Date.now()}_${Math.random().toString(36).substr(2, 6)}.${extension}`;
+      const filePath = `${safeFolder}/${fileName}`;
+
+      // Try 'photos' bucket first
+      let uploadRes = await this.client.storage
+        .from('photos')
+        .upload(filePath, blob, {
+          cacheControl: '3600',
+          upsert: true,
+          contentType: contentType
+        });
+
+      let targetBucket = 'photos';
+
+      if (uploadRes.error) {
+        console.warn(`[Supabase Storage] photos bucket failed (${uploadRes.error.message}), trying hostel-documents bucket...`);
+        uploadRes = await this.client.storage
+          .from('hostel-documents')
+          .upload(filePath, blob, {
+            cacheControl: '3600',
+            upsert: true,
+            contentType: contentType
+          });
+        targetBucket = 'hostel-documents';
+      }
+
+      if (uploadRes.error) {
+        console.warn('[Supabase Storage Upload Failed]', uploadRes.error.message);
+        return typeof fileOrDataUrl === 'string' ? fileOrDataUrl : null;
+      }
+
+      const { data: publicUrlData } = this.client.storage.from(targetBucket).getPublicUrl(filePath);
+      if (publicUrlData && publicUrlData.publicUrl) {
+        console.log(`[Supabase Storage] Successfully uploaded to ${targetBucket}/${filePath} ->`, publicUrlData.publicUrl);
+        return publicUrlData.publicUrl;
+      }
+    } catch (err) {
+      console.warn('[Supabase Storage Upload Exception]', err);
+    }
+
+    return typeof fileOrDataUrl === 'string' ? fileOrDataUrl : null;
+  }
+
+  // Scan and synchronize all local/base64 student & teacher photos to Supabase Storage Bucket
+  async syncAllPhotosToSupabaseStorage() {
+    if (!this.useSupabase || !this.client) {
+      console.log('[Photo Sync] Supabase not connected. Skipping bucket upload.');
+      return { syncedCount: 0, skippedCount: 0 };
+    }
+
+    let syncedCount = 0;
+    let skippedCount = 0;
+
+    try {
+      // 1. Sync Student Photos
+      const students = await this.getTable('students');
+      for (const s of students) {
+        if (s.photo_url && typeof s.photo_url === 'string' && s.photo_url.startsWith('data:image/')) {
+          console.log(`[Photo Sync] Uploading photo for student ${s.full_name} (${s.admission_no || s.id})...`);
+          const publicUrl = await this.uploadPhoto(s.photo_url, 'students', s.admission_no || s.id);
+          if (publicUrl && publicUrl.startsWith('http')) {
+            await this.updateRecord('students', s.id, { photo_url: publicUrl });
+            syncedCount++;
+          }
+        } else {
+          skippedCount++;
+        }
+      }
+
+      // 2. Sync Teacher / Staff Photos
+      const teachers = await this.getTable('teachers');
+      for (const t of teachers) {
+        const photo = t.avatar_url || t.photo_url;
+        if (photo && typeof photo === 'string' && photo.startsWith('data:image/')) {
+          console.log(`[Photo Sync] Uploading avatar for teacher ${t.full_name} (${t.employee_id || t.id})...`);
+          const publicUrl = await this.uploadPhoto(photo, 'teachers', t.employee_id || t.id);
+          if (publicUrl && publicUrl.startsWith('http')) {
+            await this.updateRecord('teachers', t.id, { avatar_url: publicUrl, photo_url: publicUrl });
+            syncedCount++;
+          }
+        } else {
+          skippedCount++;
+        }
+      }
+
+      // 3. Sync Profile Avatars
+      const profiles = await this.getTable('profiles');
+      for (const p of profiles) {
+        if (p.avatar_url && typeof p.avatar_url === 'string' && p.avatar_url.startsWith('data:image/')) {
+          const publicUrl = await this.uploadPhoto(p.avatar_url, 'profiles', p.id);
+          if (publicUrl && publicUrl.startsWith('http')) {
+            await this.updateRecord('profiles', p.id, { avatar_url: publicUrl, photo_url: publicUrl });
+            syncedCount++;
+          }
+        }
+      }
+
+      console.log(`[Photo Sync Finished] Uploaded ${syncedCount} photos to Supabase Storage.`);
+    } catch (err) {
+      console.warn('[Photo Sync Error]', err);
+    }
+
+    return { syncedCount, skippedCount };
+  }
+
   // Generic Query Method
   async getTable(tableName) {
     if (this.useSupabase && this.client) {
@@ -686,6 +854,24 @@ class DataManager {
     }
     if (!record.created_at) {
       record.created_at = new Date().toISOString();
+    }
+
+    // Auto-upload Base64 images to Supabase Storage bucket before database insertion
+    if (this.useSupabase && this.client) {
+      try {
+        if (record.photo_url && typeof record.photo_url === 'string' && record.photo_url.startsWith('data:image/')) {
+          const folder = tableName === 'students' ? 'students' : (tableName === 'teachers' ? 'teachers' : 'photos');
+          const uploadedUrl = await this.uploadPhoto(record.photo_url, folder, record.admission_no || record.employee_id || record.id);
+          if (uploadedUrl) record.photo_url = uploadedUrl;
+        }
+        if (record.avatar_url && typeof record.avatar_url === 'string' && record.avatar_url.startsWith('data:image/')) {
+          const folder = tableName === 'teachers' ? 'teachers' : (tableName === 'profiles' ? 'profiles' : 'avatars');
+          const uploadedUrl = await this.uploadPhoto(record.avatar_url, folder, record.employee_id || record.id);
+          if (uploadedUrl) record.avatar_url = uploadedUrl;
+        }
+      } catch (uploadErr) {
+        console.warn(`[Photo Upload on Insert ${tableName}]`, uploadErr);
+      }
     }
 
     if (this.useSupabase && this.client) {
@@ -710,6 +896,24 @@ class DataManager {
 
   async updateRecord(tableName, id, updates) {
     updates.updated_at = new Date().toISOString();
+
+    // Auto-upload Base64 images to Supabase Storage bucket before database update
+    if (this.useSupabase && this.client) {
+      try {
+        if (updates.photo_url && typeof updates.photo_url === 'string' && updates.photo_url.startsWith('data:image/')) {
+          const folder = tableName === 'students' ? 'students' : (tableName === 'teachers' ? 'teachers' : 'photos');
+          const uploadedUrl = await this.uploadPhoto(updates.photo_url, folder, updates.admission_no || id);
+          if (uploadedUrl) updates.photo_url = uploadedUrl;
+        }
+        if (updates.avatar_url && typeof updates.avatar_url === 'string' && updates.avatar_url.startsWith('data:image/')) {
+          const folder = tableName === 'teachers' ? 'teachers' : (tableName === 'profiles' ? 'profiles' : 'avatars');
+          const uploadedUrl = await this.uploadPhoto(updates.avatar_url, folder, updates.employee_id || id);
+          if (uploadedUrl) updates.avatar_url = uploadedUrl;
+        }
+      } catch (uploadErr) {
+        console.warn(`[Photo Upload on Update ${tableName}]`, uploadErr);
+      }
+    }
 
     if (this.useSupabase && this.client) {
       try {

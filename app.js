@@ -8116,6 +8116,26 @@ class AppController {
     this.renderCurrentView();
   }
 
+  async syncAllPhotosToCloudStorage() {
+    if (!window.db.useSupabase || !window.db.client) {
+      this.showToast('Please connect to Supabase first using your anon key.', 'warning');
+      return;
+    }
+
+    this.showToast('Starting photo upload to Supabase bucket...', 'info', 'Cloud Sync');
+    try {
+      const res = await window.db.syncAllPhotosToSupabaseStorage();
+      if (res.syncedCount > 0) {
+        this.showToast(`Successfully uploaded ${res.syncedCount} photo(s) to Supabase Storage bucket!`, 'success', 'Sync Completed');
+      } else {
+        this.showToast('All photos are already synchronized with Supabase Storage.', 'success', 'Sync Up to Date');
+      }
+      this.renderCurrentView();
+    } catch (err) {
+      this.showToast('Photo upload failed: ' + err.message, 'error');
+    }
+  }
+
   // ==========================================
   // SUPER ADMIN BRANDING & PROFILE CUSTOMIZATION
   // ==========================================
