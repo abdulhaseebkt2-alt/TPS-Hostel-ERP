@@ -1,373 +1,319 @@
 /**
  * THAIBA PUBLIC SCHOOL - HOSTEL IRP
- * Authentication, Sign-Up, Password Recovery & RBAC Engine
- * Designated Super Admin: abdulhaseebkt2@gmail.com
+ * Authentication Engine, Pending Registrations & Role-Based Security Gateway
  */
 
-class AuthManager {
+class AuthService {
   constructor() {
-    this.currentUser = null;
-    this.init();
+    this.currentUser = this.loadSavedSession();
   }
 
-  init() {
-    const savedUser = localStorage.getItem(CONFIG.STORAGE_KEYS.AUTH_USER);
-    if (savedUser) {
-      try {
-        this.currentUser = JSON.parse(savedUser);
-        if (this.currentUser && this.currentUser.full_name) {
-          this.currentUser.full_name = this.currentUser.full_name.replace(/\s*\((?:Super\s*Admin|Admin|Warden|Teacher|Student|Parent)\)/gi, '').trim();
-        }
-      } catch (e) {
-        this.setDefaultSuperAdmin();
-      }
-    } else {
-      this.setDefaultSuperAdmin();
-    }
-  }
-
-  setDefaultSuperAdmin() {
-    this.currentUser = {
-      id: 'usr_super_admin',
-      email: CONFIG.SUPER_ADMIN_EMAIL,
-      full_name: 'Abdul Haseeb',
-      role: CONFIG.ROLES.SUPER_ADMIN,
-      status: 'active',
-      phone: '+91 98765 00001',
-      avatar_url: CONFIG.DEFAULT_AVATAR
-    };
-    this.saveUser();
-  }
-
-  saveUser() {
-    localStorage.setItem(CONFIG.STORAGE_KEYS.AUTH_USER, JSON.stringify(this.currentUser));
-    localStorage.setItem(CONFIG.STORAGE_KEYS.CURRENT_ROLE, this.currentUser ? this.currentUser.role : 'guest');
-  }
-
-  async updateProfile(updatedData) {
-    if (!this.currentUser) throw new Error('No active user logged in.');
-    
-    if (updatedData.full_name) {
-      updatedData.full_name = updatedData.full_name.replace(/\s*\((?:Super\s*Admin|Admin|Warden|Teacher|Student|Parent)\)/gi, '').trim();
-    }
-
-    this.currentUser = {
-      ...this.currentUser,
-      ...updatedData
-    };
-    this.saveUser();
-
-    // If Supabase is connected and we have client
-    if (db.useSupabase && db.client && this.currentUser.id) {
-      try {
-        await db.client.from('profiles').upsert({
-          id: this.currentUser.id,
-          full_name: this.currentUser.full_name,
-          phone: this.currentUser.phone,
-          avatar_url: this.currentUser.avatar_url,
-          updated_at: new Date().toISOString()
-        });
-      } catch (err) {
-        console.warn('[Supabase profile update warning]:', err.message);
-      }
-    }
-
-    // Also update local users store if matched
+  loadSavedSession() {
     try {
-      const users = await db.getTable('users');
-      const userIdx = users.findIndex(u => u.id === this.currentUser.id || u.email === this.currentUser.email);
-      if (userIdx !== -1) {
-        await db.updateRecord('users', users[userIdx].id, {
-          full_name: this.currentUser.full_name,
-          phone: this.currentUser.phone,
-          avatar_url: this.currentUser.avatar_url
-        });
+      const raw = localStorage.getItem(CONFIG.STORAGE_KEYS.AUTH_USER);
+      if (raw) {
+        return JSON.parse(raw);
       }
-    } catch (e) {}
+    } catch (e) {
+      console.warn('[Auth] Error parsing saved session:', e);
+    }
+    return null;
+  }
 
-    window.dispatchEvent(new CustomEvent('tps_auth_changed', { detail: this.currentUser }));
+  saveSession(user) {
+    this.currentUser = user;
+    try {
+      if (user) {
+        localStorage.setItem(CONFIG.STORAGE_KEYS.AUTH_USER, JSON.stringify(user));
+      } else {
+        localStorage.removeItem(CONFIG.STORAGE_KEYS.AUTH_USER);
+      }
+    } catch (e) {
+      console.warn('[Auth] Error saving session:', e);
+    }
+  }
+
+  getPortalUrl(role) {
+    switch (role) {
+      case 'super_admin':
+      case 'admin':
+        return 'index.html';
+      case 'warden':
+        return 'warden.html';
+      case 'teacher':
+      case 'mentor':
+        return 'teacher.html';
+      case 'parent':
+      case 'student':
+        return 'parent.html';
+      default:
+        return 'login.html';
+    }
+  }
+
+  /**
+   * Require Authentication & Authorize Portal Access
+   * Automatically redirects to login or proper portal
+   */
+  requireAuth(allowedRoles = []) {
+    const user = this.getCurrentUser();
+    if (!user) {
+      window.location.href = 'login.html';
+      return null;
+    }
+
+    if (user.status === 'pending_approval') {
+      alert('Your registration is currently pending review by Super Admin (abdulhaseebkt2@gmail.com). You will gain access once approved.');
+      this.logout();
+      window.location.href = 'login.html';
+      return null;
+    }
+
+    if (user.status === 'disabled') {
+      alert('This user account has been deactivated. Please contact the hostel office.');
+      this.logout();
+      window.location.href = 'login.html';
+      return null;
+    }
+
+    if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
+      // User is logged in but trying to access an unauthorized portal window
+      const properPortal = this.getPortalUrl(user.role);
+      console.warn(`[Auth Guard] Unauthorized access for role "${user.role}". Redirecting to ${properPortal}`);
+      window.location.href = properPortal;
+      return null;
+    }
+
+    return user;
+  }
+
+  getCurrentUser() {
     return this.currentUser;
   }
 
-  // Login with Email and Password
-  async login(email, password) {
-    if (!email || !password) {
-      throw new Error('Please enter both Email ID and Password.');
-    }
-
-    const cleanEmail = email.trim().toLowerCase();
-
-    // 1. Try Supabase Auth if connected
-    if (db.useSupabase && db.client) {
-      try {
-        const { data, error } = await db.client.auth.signInWithPassword({
-          email: cleanEmail,
-          password: password
-        });
-        if (error) throw error;
-        if (data.user) {
-          // Fetch user profile
-          const { data: profile } = await db.client.from('profiles').select('*').eq('id', data.user.id).single();
-          this.currentUser = {
-            id: data.user.id,
-            email: data.user.email,
-            full_name: profile ? profile.full_name : data.user.email.split('@')[0],
-            role: profile ? profile.role : (cleanEmail === CONFIG.SUPER_ADMIN_EMAIL ? CONFIG.ROLES.SUPER_ADMIN : CONFIG.ROLES.PENDING),
-            status: profile ? profile.status : 'active',
-            avatar_url: profile ? profile.avatar_url : CONFIG.DEFAULT_AVATAR
-          };
-          this.saveUser();
-          window.dispatchEvent(new CustomEvent('tps_auth_changed', { detail: this.currentUser }));
-          return this.currentUser;
-        }
-      } catch (err) {
-        console.warn('[Supabase Auth Failed, checking local user store]:', err.message);
-      }
-    }
-
-    // 2. Check local users store
-    const users = await db.getTable('users');
-    const matchedUser = users.find(u => u.email.toLowerCase() === cleanEmail);
-
-    if (!matchedUser) {
-      // If logging in as super admin with default credentials
-      if (cleanEmail === CONFIG.SUPER_ADMIN_EMAIL.toLowerCase()) {
-        this.setDefaultSuperAdmin();
-        window.dispatchEvent(new CustomEvent('tps_auth_changed', { detail: this.currentUser }));
-        return this.currentUser;
-      }
-      throw new Error('No registered account found with this email ID. Please sign up.');
-    }
-
-    if (matchedUser.status === 'pending_approval') {
-      throw new Error('Your account is pending Super Admin approval. Please wait for role assignment.');
-    }
-
-    if (matchedUser.status === 'disabled') {
-      throw new Error('Your account has been deactivated by the Administrator. Please contact management.');
-    }
-
-    // Check password
-    if (matchedUser.password_hash && matchedUser.password_hash !== password) {
-      throw new Error('Incorrect password. Use Forgot Password to recover your account.');
-    }
-
-    this.currentUser = { ...matchedUser };
-    this.saveUser();
-    window.dispatchEvent(new CustomEvent('tps_auth_changed', { detail: this.currentUser }));
-    return this.currentUser;
+  isSuperAdmin() {
+    return this.currentUser && this.currentUser.role === 'super_admin';
   }
 
-  // Sign Up / Register New Account
-  async signup(data) {
-    if (!data.email || !data.password || !data.full_name) {
-      throw new Error('Please fill in Name, Email ID, and Password.');
+  isAdmin() {
+    return this.currentUser && (this.currentUser.role === 'admin' || this.currentUser.role === 'super_admin');
+  }
+
+  isWarden() {
+    return this.currentUser && (this.currentUser.role === 'warden' || this.isAdmin());
+  }
+
+  isTeacher() {
+    return this.currentUser && (this.currentUser.role === 'teacher' || this.currentUser.role === 'mentor' || this.isAdmin());
+  }
+
+  isParent() {
+    return this.currentUser && (this.currentUser.role === 'parent' || this.isAdmin());
+  }
+
+  /**
+   * Universal Login (Handles Super Admin, Staff, Teachers, Parents by Phone or Email)
+   */
+  async login(identifier, password) {
+    if (!identifier || !password) {
+      throw new Error('Please enter your email / mobile number and password.');
     }
 
-    const cleanEmail = data.email.trim().toLowerCase();
+    const cleanId = identifier.trim().toLowerCase();
+    const cleanPass = password.trim();
 
-    // Check if email already registered
-    const users = await db.getTable('users');
-    if (users.some(u => u.email.toLowerCase() === cleanEmail)) {
-      throw new Error('An account with this Email ID already exists. Please login instead.');
+    // 1. Check Master Super Admin Hardcoded Credentials
+    if (cleanId === CONFIG.SUPER_ADMIN_EMAIL.toLowerCase() && cleanPass === CONFIG.DEFAULT_SUPER_ADMIN_PASS) {
+      const superAdminUser = {
+        id: 'usr_super_admin',
+        email: CONFIG.SUPER_ADMIN_EMAIL,
+        full_name: 'Abdul Haseeb',
+        role: 'super_admin',
+        status: 'active',
+        phone: '+91 98765 00001',
+        avatar_url: CONFIG.DEFAULT_AVATAR,
+        created_at: new Date().toISOString()
+      };
+      this.saveSession(superAdminUser);
+      return superAdminUser;
     }
 
-    // If designated super admin signs up, auto-activate as super admin
-    const isSuperAdminEmail = (cleanEmail === CONFIG.SUPER_ADMIN_EMAIL.toLowerCase());
-    const assignedRole = isSuperAdminEmail ? CONFIG.ROLES.SUPER_ADMIN : CONFIG.ROLES.PENDING;
-    const assignedStatus = isSuperAdminEmail ? 'active' : 'pending_approval';
+    // 2. Query Users from Database Layer
+    const users = await window.db.getTable('users');
 
-    // 1. Supabase Auth signup if connected
-    if (db.useSupabase && db.client) {
-      try {
-        const { data: authData, error } = await db.client.auth.signUp({
-          email: cleanEmail,
-          password: data.password,
-          options: {
-            data: { full_name: data.full_name, requested_role: data.requested_role || 'student' }
-          }
-        });
-        if (error) console.warn('[Supabase signup error]:', error.message);
-      } catch (err) {
-        console.warn('[Supabase Auth signup skipped]:', err.message);
+    // Find by email or by phone number
+    const user = users.find(u => {
+      const matchEmail = u.email && u.email.toLowerCase().trim() === cleanId;
+      const cleanPhone = (u.phone || '').replace(/[^0-9]/g, '');
+      const cleanInputDigits = cleanId.replace(/[^0-9]/g, '');
+      const matchPhone = cleanInputDigits.length >= 10 && cleanPhone.endsWith(cleanInputDigits.slice(-10));
+      return matchEmail || matchPhone;
+    });
+
+    if (!user) {
+      throw new Error('No account found with this email or registered phone number. Please sign up or contact Super Admin.');
+    }
+
+    if (user.password_hash !== cleanPass && user.password !== cleanPass) {
+      throw new Error('Incorrect password. Please verify your credentials.');
+    }
+
+    if (user.status === 'pending_approval') {
+      throw new Error('Your registration is pending review by Super Admin (abdulhaseebkt2@gmail.com). You will be notified once assigned.');
+    }
+
+    if (user.status === 'disabled') {
+      throw new Error('Your account has been deactivated. Please contact the administrator.');
+    }
+
+    this.saveSession(user);
+    return user;
+  }
+
+  /**
+   * Public Registration (Sign Up)
+   * Places new registrations into 'pending_approval' queue
+   */
+  async signup(signupData) {
+    const { full_name, email, phone, requested_role, password } = signupData;
+
+    if (!full_name || !password) {
+      throw new Error('Full Name and Password are required.');
+    }
+
+    if (password.length < 6) {
+      throw new Error('Password must be at least 6 characters long.');
+    }
+
+    const cleanPhone = (phone || '').trim();
+    const cleanEmail = (email || '').trim().toLowerCase();
+
+    if (!cleanEmail && !cleanPhone) {
+      throw new Error('Please provide either an Email address or Mobile number.');
+    }
+
+    const users = await window.db.getTable('users');
+
+    // Check duplicate email
+    if (cleanEmail && users.some(u => u.email && u.email.toLowerCase() === cleanEmail)) {
+      throw new Error(`An account with email "${cleanEmail}" already exists. Please log in.`);
+    }
+
+    // Check duplicate phone for parents
+    if (cleanPhone) {
+      const inputDigits = cleanPhone.replace(/[^0-9]/g, '').slice(-10);
+      if (inputDigits.length === 10 && users.some(u => (u.phone || '').replace(/[^0-9]/g, '').endsWith(inputDigits))) {
+        throw new Error(`An account with mobile number "${cleanPhone}" is already registered.`);
       }
     }
 
-    // 2. Save in users table
     const newUser = {
-      id: 'usr_' + Date.now(),
-      email: cleanEmail,
-      full_name: data.full_name,
-      password_hash: data.password,
-      role: assignedRole,
-      status: assignedStatus,
-      phone: data.phone || '',
-      requested_role: data.requested_role || 'student',
+      id: 'usr_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+      full_name: full_name.trim(),
+      email: cleanEmail || `${cleanPhone.replace(/[^0-9]/g, '')}@parent.tps`,
+      phone: cleanPhone,
+      role: 'pending',
+      requested_role: requested_role || 'teacher',
+      status: 'pending_approval',
+      password_hash: password.trim(),
       avatar_url: CONFIG.DEFAULT_AVATAR,
       created_at: new Date().toISOString()
     };
 
-    await db.insertRecord('users', newUser);
+    // If parent signup, auto-link candidate students by phone
+    if (requested_role === 'parent' && cleanPhone) {
+      const students = await window.db.getTable('students');
+      const phoneDigits = cleanPhone.replace(/[^0-9]/g, '').slice(-10);
+      const matched = students.filter(s => {
+        const fPhone = (s.father_phone || '').replace(/[^0-9]/g, '');
+        const mPhone = (s.mother_phone || '').replace(/[^0-9]/g, '');
+        return fPhone.endsWith(phoneDigits) || mPhone.endsWith(phoneDigits);
+      });
+      if (matched.length > 0) {
+        newUser.linked_student_ids = matched.map(s => s.id);
+        newUser.linked_student_id = matched[0].id;
+      }
+    }
 
-    // Notify Super Admin
-    await db.insertRecord('notifications', {
-      recipient_role: CONFIG.ROLES.SUPER_ADMIN,
-      title: 'New User Registration Awaiting Approval',
-      message: `${newUser.full_name} (${newUser.email}) registered and requested position as "${newUser.requested_role}". Please review and assign role.`,
-      type: 'general',
+    await window.db.insertRecord('users', newUser);
+
+    // Create Notification for Super Admin
+    await window.db.insertRecord('notifications', {
+      recipient_role: 'super_admin',
+      title: 'New Account Registration Request',
+      message: `${newUser.full_name} registered as ${newUser.requested_role.toUpperCase()}. Awaiting role approval.`,
+      type: 'registration_request',
       related_id: newUser.id,
-      is_read: false
+      is_read: false,
+      created_at: new Date().toISOString()
     });
 
     return newUser;
   }
 
-  // Forgot Password / Password Recovery
-  async recoverPassword(email) {
-    if (!email) throw new Error('Please enter your Email ID to recover password.');
+  /**
+   * Super Admin approves pending applicant and designates exact institutional position
+   */
+  async approveUserAndAssignRole(userId, designatedRole, metadata = {}) {
+    const users = await window.db.getTable('users');
+    const user = users.find(u => u.id === userId);
+    if (!user) throw new Error('User record not found.');
 
-    const cleanEmail = email.trim().toLowerCase();
+    const updates = {
+      role: designatedRole,
+      status: 'active',
+      linked_teacher_id: metadata.teacher_id || null,
+      linked_student_id: metadata.student_id || null,
+      linked_student_ids: metadata.student_ids || (metadata.student_id ? [metadata.student_id] : (user.linked_student_ids || [])),
+      hostel_id: metadata.hostel_id || null,
+      updated_at: new Date().toISOString()
+    };
 
-    // 1. Supabase Auth reset password
-    if (db.useSupabase && db.client) {
-      try {
-        const { error } = await db.client.auth.resetPasswordForEmail(cleanEmail, {
-          redirectTo: window.location.origin
-        });
-        if (error) console.warn('[Supabase password recovery error]:', error.message);
-      } catch (e) {
-        console.warn('[Supabase password recovery failed]:', e.message);
+    // If assigned as teacher/warden and has teacher profile, link avatar
+    if (metadata.teacher_id) {
+      const teachers = await window.db.getTable('teachers');
+      const t = teachers.find(item => item.id === metadata.teacher_id);
+      if (t && t.avatar_url) {
+        updates.avatar_url = t.avatar_url;
       }
     }
 
-    const users = await db.getTable('users');
-    const matchedUser = users.find(u => u.email.toLowerCase() === cleanEmail);
+    await window.db.updateRecord('users', userId, updates);
 
-    if (!matchedUser) {
-      throw new Error(`No account found for ${cleanEmail}. Please verify your email ID or Sign Up.`);
+    // If current session is this user, refresh session
+    if (this.currentUser && this.currentUser.id === userId) {
+      this.currentUser = { ...this.currentUser, ...updates };
+      this.saveSession(this.currentUser);
     }
 
-    // Generate temporary recovery pin/link
-    const tempPassword = 'TPS-' + Math.floor(100000 + Math.random() * 900000);
-    await db.updateRecord('users', matchedUser.id, { password_hash: tempPassword });
-
-    return {
-      success: true,
-      email: cleanEmail,
-      tempPassword: tempPassword,
-      message: `Password reset instructions and recovery key have been generated for ${cleanEmail}.`
-    };
-  }
-
-  // Logout
-  async logout() {
-    if (db.useSupabase && db.client) {
-      try { await db.client.auth.signOut(); } catch (e) {}
-    }
-    this.currentUser = null;
-    localStorage.removeItem(CONFIG.STORAGE_KEYS.AUTH_USER);
-    localStorage.removeItem(CONFIG.STORAGE_KEYS.CURRENT_ROLE);
-    window.dispatchEvent(new CustomEvent('tps_auth_changed', { detail: null }));
-  }
-
-  // Switch role dynamically (for quick testing)
-  switchRole(newRole) {
-    if (newRole === CONFIG.ROLES.SUPER_ADMIN) {
-      this.setDefaultSuperAdmin();
-    } else {
-      this.currentUser.role = newRole;
-      this.saveUser();
-    }
-    window.dispatchEvent(new CustomEvent('tps_auth_changed', { detail: this.currentUser }));
-  }
-
-  // User Management Methods (Super Admin / Admin only)
-  async getAllUsers() {
-    return await db.getTable('users');
-  }
-
-  async approveUserAndAssignRole(userId, assignedRole, linkedEntity = {}) {
-    const updates = {
-      role: assignedRole,
-      status: 'active',
-      linked_student_id: linkedEntity.student_id || null,
-      linked_teacher_id: linkedEntity.teacher_id || null,
-      hostel_id: linkedEntity.hostel_id || null,
-      approved_by: this.currentUser ? this.currentUser.email : 'Super Admin',
-      approved_at: new Date().toISOString()
-    };
-
-    const updated = await db.updateRecord('users', userId, updates);
-
-    // Notify user
-    await db.insertRecord('notifications', {
-      user_id: userId,
-      title: 'Account Approved & Role Assigned',
-      message: `Your TPS Hostel IRP account has been approved and assigned position: ${assignedRole.toUpperCase()}.`,
-      type: 'general',
-      is_read: false
-    });
-
-    return updated;
-  }
-
-  async disableUser(userId) {
-    return await db.updateRecord('users', userId, { status: 'disabled' });
+    return updates;
   }
 
   async activateUser(userId) {
-    return await db.updateRecord('users', userId, { status: 'active' });
+    return await window.db.updateRecord('users', userId, { status: 'active' });
+  }
+
+  async disableUser(userId) {
+    return await window.db.updateRecord('users', userId, { status: 'disabled' });
   }
 
   async removeUser(userId) {
-    // Delete user from users table
-    return await db.deleteRecord('users', userId);
+    return await window.db.deleteRecord('users', userId);
   }
 
-  hasRole(roles) {
-    if (!this.currentUser) return false;
-    if (this.currentUser.role === CONFIG.ROLES.SUPER_ADMIN) return true;
-    if (Array.isArray(roles)) {
-      return roles.includes(this.currentUser.role);
-    }
-    return this.currentUser.role === roles;
+  async getAllUsers() {
+    return await window.db.getTable('users');
   }
 
-  canManageStudents() {
-    return this.hasRole([CONFIG.ROLES.SUPER_ADMIN, CONFIG.ROLES.ADMIN, CONFIG.ROLES.WARDEN]);
+  async getPendingUsers() {
+    const users = await this.getAllUsers();
+    return users.filter(u => u.status === 'pending_approval' || u.role === 'pending');
   }
 
-  canManageBeds() {
-    return this.hasRole([CONFIG.ROLES.SUPER_ADMIN, CONFIG.ROLES.ADMIN, CONFIG.ROLES.WARDEN]);
-  }
-
-  canMarkAttendance() {
-    return this.hasRole([CONFIG.ROLES.SUPER_ADMIN, CONFIG.ROLES.ADMIN, CONFIG.ROLES.WARDEN, CONFIG.ROLES.TEACHER]);
-  }
-
-  canManageLeave() {
-    return this.hasRole([CONFIG.ROLES.SUPER_ADMIN, CONFIG.ROLES.ADMIN, CONFIG.ROLES.WARDEN]);
-  }
-
-  canManageFines() {
-    return this.hasRole([CONFIG.ROLES.SUPER_ADMIN, CONFIG.ROLES.ADMIN, CONFIG.ROLES.WARDEN]);
-  }
-
-  canManageTimetable() {
-    return this.hasRole([CONFIG.ROLES.SUPER_ADMIN, CONFIG.ROLES.ADMIN]);
-  }
-
-  isSuperAdmin() {
-    return this.currentUser && this.currentUser.role === CONFIG.ROLES.SUPER_ADMIN;
-  }
-
-  canManageClassRooms() {
-    return this.isSuperAdmin();
-  }
-
-  canManageSettings() {
-    return this.hasRole([CONFIG.ROLES.SUPER_ADMIN]);
+  logout() {
+    this.saveSession(null);
+    window.location.href = 'login.html';
   }
 }
 
-window.Auth = new AuthManager();
+window.Auth = new AuthService();

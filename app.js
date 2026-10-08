@@ -10,6 +10,11 @@ class AppController {
   }
 
   init() {
+    if (window.Auth) {
+      const user = window.Auth.requireAuth(['super_admin', 'admin']);
+      if (!user) return; // redirected
+    }
+
     this.applySavedTheme();
     this.applyBranding();
     this.bindEvents();
@@ -5886,6 +5891,17 @@ class AppController {
       const hiddenInput = document.getElementById('admission-photo-url');
       if (preview) preview.src = compressedDataUrl;
       if (hiddenInput) hiddenInput.value = compressedDataUrl;
+
+      // Direct upload to Supabase Storage Bucket immediately
+      if (window.db && window.db.useSupabase && window.db.client) {
+        const studentAdm = document.querySelector('input[name="admission_no"]')?.value || 'student_' + Date.now();
+        const uploadedUrl = await window.db.uploadPhoto(compressedDataUrl, 'students', studentAdm);
+        if (uploadedUrl && uploadedUrl.startsWith('http')) {
+          if (hiddenInput) hiddenInput.value = uploadedUrl;
+          if (preview) preview.src = uploadedUrl;
+          this.showToast('Photo uploaded directly to Supabase Storage!', 'success');
+        }
+      }
     } catch (err) {
       this.showToast('Could not process photo: ' + err.message, 'error');
     }
@@ -6395,6 +6411,17 @@ class AppController {
       const hiddenInput = document.getElementById('edit-photo-url');
       if (preview) preview.src = compressedDataUrl;
       if (hiddenInput) hiddenInput.value = compressedDataUrl;
+
+      // Direct upload to Supabase Storage Bucket immediately
+      if (window.db && window.db.useSupabase && window.db.client) {
+        const studentAdm = document.querySelector('#edit-student-form input[name="admission_no"]')?.value || 'student_' + Date.now();
+        const uploadedUrl = await window.db.uploadPhoto(compressedDataUrl, 'students', studentAdm);
+        if (uploadedUrl && uploadedUrl.startsWith('http')) {
+          if (hiddenInput) hiddenInput.value = uploadedUrl;
+          if (preview) preview.src = uploadedUrl;
+          this.showToast('Photo uploaded directly to Supabase Storage!', 'success');
+        }
+      }
     } catch (err) {
       this.showToast('Could not process photo: ' + err.message, 'error');
     }
@@ -7876,6 +7903,17 @@ class AppController {
       const hiddenInput = document.getElementById('staff-photo-url');
       if (preview) preview.src = compressedDataUrl;
       if (hiddenInput) hiddenInput.value = compressedDataUrl;
+
+      // Direct upload to Supabase Storage Bucket immediately
+      if (window.db && window.db.useSupabase && window.db.client) {
+        const empId = document.querySelector('#staff-form input[name="employee_id"]')?.value || 'staff_' + Date.now();
+        const uploadedUrl = await window.db.uploadPhoto(compressedDataUrl, 'teachers', empId);
+        if (uploadedUrl && uploadedUrl.startsWith('http')) {
+          if (hiddenInput) hiddenInput.value = uploadedUrl;
+          if (preview) preview.src = uploadedUrl;
+          this.showToast('Staff photo uploaded directly to Supabase Storage!', 'success');
+        }
+      }
     } catch (err) {
       this.showToast('Could not process photo: ' + err.message, 'error');
     }
@@ -8507,6 +8545,17 @@ class AppController {
       try {
         const compressedDataUrl = await this.compressImageFile(file, 320, 320, 0.78);
         this.updateProfileAvatarPreview(compressedDataUrl);
+
+        // Direct upload to Supabase Storage Bucket immediately
+        if (window.db && window.db.useSupabase && window.db.client) {
+          const user = window.Auth?.currentUser;
+          const customId = user ? (user.id || user.email) : 'profile_' + Date.now();
+          const uploadedUrl = await window.db.uploadPhoto(compressedDataUrl, 'profiles', customId);
+          if (uploadedUrl && uploadedUrl.startsWith('http')) {
+            this.updateProfileAvatarPreview(uploadedUrl);
+            this.showToast('Profile photo uploaded directly to Supabase Storage!', 'success');
+          }
+        }
       } catch (err) {
         this.showToast('Could not process avatar: ' + err.message, 'error');
       }

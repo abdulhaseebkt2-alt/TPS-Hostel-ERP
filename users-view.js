@@ -307,6 +307,11 @@ class UsersView {
                       <td style="text-align:right;">
                         <div style="display:inline-flex; gap:0.35rem; align-items:center; justify-content:flex-end;">
                           ${item.hasAccount ? `
+                            ${item.status === 'pending_approval' ? `
+                              <button class="btn btn-sm btn-success" onclick="App.openAssignRoleModal('${item.user_id}')" style="background:#16a34a; color:#fff; font-weight:600; font-size:0.78rem; padding:4px 10px; border-radius:6px; box-shadow:0 2px 4px rgba(22,163,74,0.2);" title="Review request and designate role">
+                                ✓ Approve & Assign Position
+                              </button>
+                            ` : ''}
                             <button class="btn btn-sm btn-outline-primary" onclick="App.openResetPasswordModal('${item.user_id}')" title="Reset Password">
                               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                             </button>
@@ -315,11 +320,11 @@ class UsersView {
                                 <button class="btn btn-sm btn-warning" onclick="App.toggleUserActive('${item.user_id}', 'disabled')" title="Deactivate access">
                                   Deactivate
                                 </button>
-                              ` : `
+                              ` : item.status === 'disabled' ? `
                                 <button class="btn btn-sm btn-primary" onclick="App.toggleUserActive('${item.user_id}', 'active')" title="Activate access">
                                   Activate
                                 </button>
-                              `}
+                              ` : ''}
                               <button class="btn btn-sm btn-danger" onclick="App.confirmRemoveUser('${item.user_id}', '${item.full_name.replace(/'/g, "\\'")}')" title="Remove user account">
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                               </button>

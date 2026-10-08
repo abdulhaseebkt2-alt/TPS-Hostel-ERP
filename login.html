@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0d5c3a">
+  <meta name="description" content="Thaiba Public School – Hostel Integrated Resource & Management Platform (TPS Hostel IRP)">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Sign In – TPS Hostel IRP</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="logo.svg">
+  <link rel="alternate icon" type="image/png" href="logo.png">
+  <link rel="apple-touch-icon" href="logo.png">
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Supabase JS Client CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Design System CSS -->
+  <link rel="stylesheet" href="variables.css?v=2.0">
+  <link rel="stylesheet" href="base.css?v=2.0">
+  <link rel="stylesheet" href="components.css?v=2.0">
+  <link rel="stylesheet" href="responsive.css?v=2.0">
+
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 50% 10%, rgba(13, 92, 58, 0.12) 0%, transparent 60%),
+                  radial-gradient(circle at 90% 90%, rgba(217, 119, 6, 0.08) 0%, transparent 50%),
+                  var(--bg-base, #f8fafc);
+      padding: 1.5rem 1rem;
+      margin: 0;
+      font-family: var(--font-main, 'Inter', sans-serif);
+    }
+    .auth-card {
+      width: 100%;
+      max-width: 440px;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 20px 40px -15px rgba(13, 92, 58, 0.18), 0 0 0 1px rgba(13, 92, 58, 0.05);
+      border-radius: 24px;
+      padding: 2.25rem 2rem;
+      box-sizing: border-box;
+      animation: authFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes authFadeIn {
+      from { opacity: 0; transform: translateY(12px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .auth-brand {
+      text-align: center;
+      margin-bottom: 1.75rem;
+    }
+    .auth-logo {
+      width: 68px;
+      height: 68px;
+      margin: 0 auto 0.75rem auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 8px;
+      box-shadow: 0 8px 24px rgba(13, 92, 58, 0.12);
+      border: 1.5px solid rgba(13, 92, 58, 0.15);
+    }
+    .auth-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .auth-title {
+      font-size: 1.35rem;
+      font-weight: 900;
+      color: var(--primary-800, #064e3b);
+      margin: 0 0 4px 0;
+      letter-spacing: -0.3px;
+    }
+    .auth-subtitle {
+      font-size: 0.82rem;
+      color: var(--text-muted, #64748b);
+      margin: 0;
+      font-weight: 500;
+    }
+    .quick-creds-banner {
+      background: rgba(13, 92, 58, 0.06);
+      border: 1px dashed rgba(13, 92, 58, 0.25);
+      border-radius: 12px;
+      padding: 0.75rem 0.9rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .quick-creds-banner button {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--primary-600, #0d5c3a);
+      background: #ffffff;
+      color: var(--primary-700, #0d5c3a);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+    .quick-creds-banner button:hover {
+      background: var(--primary-600, #0d5c3a);
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="auth-card">
+    <div class="auth-brand">
+      <div class="auth-logo">
+        <img src="logo.svg" onerror="this.src='logo.png'" alt="Logo">
+      </div>
+      <h1 class="auth-title">TPS HOSTEL IRP</h1>
+      <p class="auth-subtitle">Thaiba Public School • Integrated Resource Platform</p>
+    </div>
+
+    <!-- Super Admin Quick Login Helper -->
+    <div class="quick-creds-banner">
+      <div style="font-size: 0.78rem; color: var(--primary-800, #064e3b);">
+        <strong>Super Admin Master Account</strong><br>
+        <span style="font-family: monospace; font-size: 0.74rem;">abdulhaseebkt2@gmail.com</span>
+      </div>
+      <button type="button" onclick="fillSuperAdmin()">Fill Master Login</button>
+    </div>
+
+    <form id="login-form" onsubmit="event.preventDefault(); handleLogin();">
+      <div class="form-group">
+        <label class="form-label" style="font-weight: 700; font-size: 0.85rem;">
+          Email ID or Registered 10-Digit Mobile <span class="required" style="color:red;">*</span>
+        </label>
+        <input 
+          type="text" 
+          class="form-control" 
+          id="login-id" 
+          placeholder="e.g. abdulhaseebkt2@gmail.com or 9847012345" 
+          required 
+          autofocus 
+          style="height: 44px; border-radius: 12px; font-size: 0.92rem; padding: 0.6rem 1rem;"
+        >
+        <div class="form-hint" style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">
+          Parents can sign in with their registered 10-digit mobile number.
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-top: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+          <label class="form-label" style="font-weight: 700; font-size: 0.85rem; margin-bottom: 0;">
+            Password <span class="required" style="color:red;">*</span>
+          </label>
+          <a href="signup.html" style="font-size: 0.78rem; color: var(--primary-700); text-decoration: none; font-weight: 600;">
+            Need Account?
+          </a>
+        </div>
+        <div style="position: relative;">
+          <input 
+            type="password" 
+            class="form-control" 
+            id="login-pass" 
+            placeholder="Enter your account password" 
+            required 
+            style="height: 44px; border-radius: 12px; font-size: 0.92rem; padding: 0.6rem 2.5rem 0.6rem 1rem;"
+          >
+          <button 
+            type="button" 
+            onclick="togglePasswordVisibility()" 
+            style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 4px;"
+            aria-label="Toggle password view"
+          >
+            👁️
+          </button>
+        </div>
+      </div>
+
+      <button 
+        type="submit" 
+        id="login-btn" 
+        class="btn btn-primary" 
+        style="width: 100%; height: 46px; border-radius: 14px; font-size: 1rem; font-weight: 800; margin-top: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 6px 20px rgba(13, 92, 58, 0.35);"
+      >
+        <span>Sign In to Portal</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
+      </button>
+
+      <div style="text-align: center; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color, #e2e8f0); font-size: 0.85rem; color: var(--text-secondary);">
+        New Faculty, Warden, or Parent? 
+        <a href="signup.html" style="color: var(--primary-700); font-weight: 700; text-decoration: none; margin-left: 4px;">
+          Register Account (Sign Up)
+        </a>
+      </div>
+    </form>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="config.js?v=2.0"></script>
+  <script src="supabase-client.js?v=2.0"></script>
+  <script src="auth.js?v=2.0"></script>
+
+  <script>
+    function showToast(message, type = 'info', title = '') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `
+        <div class="toast-content">
+          ${title ? `<div class="toast-title">${title}</div>` : ''}
+          <div class="toast-message">${message}</div>
+        </div>
+      `;
+      container.appendChild(toast);
+      setTimeout(() => toast.classList.add('show'), 10);
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    function fillSuperAdmin() {
+      document.getElementById('login-id').value = CONFIG.SUPER_ADMIN_EMAIL;
+      document.getElementById('login-pass').value = CONFIG.DEFAULT_SUPER_ADMIN_PASS;
+      showToast('Super Admin master credentials populated.', 'info');
+    }
+
+    function togglePasswordVisibility() {
+      const p = document.getElementById('login-pass');
+      p.type = p.type === 'password' ? 'text' : 'password';
+    }
+
+    async function handleLogin() {
+      const id = document.getElementById('login-id').value.trim();
+      const pass = document.getElementById('login-pass').value;
+      const btn = document.getElementById('login-btn');
+
+      if (!id || !pass) {
+        showToast('Please enter both your identifier and password.', 'warning');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span>Verifying Credentials...</span>';
+
+      try {
+        const user = await window.Auth.login(id, pass);
+        const destination = window.Auth.getPortalUrl(user.role);
+        showToast(`Welcome back, ${user.full_name}! Redirecting to ${CONFIG.ROLE_INFO[user.role]?.label || 'Portal'}...`, 'success');
+        
+        setTimeout(() => {
+          window.location.href = destination;
+        }, 600);
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = `<span>Sign In to Portal</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>`;
+        showToast(err.message, 'error', 'Sign In Failed');
+      }
+    }
+
+    // Auto-fill if already logged in and redirect
+    window.addEventListener('DOMContentLoaded', () => {
+      const user = window.Auth.getCurrentUser();
+      if (user && user.status === 'active') {
+        const url = window.Auth.getPortalUrl(user.role);
+        // If query param ?logout=true is not set, redirect
+        const params = new URLSearchParams(window.location.search);
+        if (!params.has('logout')) {
+          window.location.href = url;
+        }
+      }
+    });
+  </script>
+</body>
+</html>

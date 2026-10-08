@@ -14,6 +14,7 @@ class DashboardView {
     const leaves = (await db.getTable('leaves')) || [];
     const leaveStudents = (await db.getTable('leave_students')) || [];
     const pendingFinesCount = fines.filter(f => f.status === 'pending').length;
+    const pendingRegistrations = window.Auth ? await window.Auth.getPendingUsers() : [];
 
     // Group outside list: consolidate batch leave students into a single card row
     const groupedOutsideItems = [];
@@ -143,6 +144,21 @@ class DashboardView {
       </div>
 
       <!-- Smart Alert Center -->
+      ${(window.Auth && window.Auth.isSuperAdmin() && pendingRegistrations.length > 0) ? `
+        <div class="status-alert-banner warning" style="background:linear-gradient(135deg, rgba(245,158,11,0.12), rgba(217,119,6,0.08)); border:1.5px solid rgba(245,158,11,0.4); margin-bottom:1rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.75rem; padding:0.85rem 1.25rem; border-radius:12px;">
+          <div style="display:flex; align-items:center; gap:0.75rem;">
+            <div style="width:36px; height:36px; border-radius:10px; background:rgba(245,158,11,0.2); display:flex; align-items:center; justify-content:center; color:#b45309; font-weight:700; font-size:1.1rem; flex-shrink:0;">
+              🔔
+            </div>
+            <div>
+              <strong style="color:var(--warning-700, #b45309); font-size:0.95rem;">Pending Account Approvals:</strong>
+              <span style="color:var(--text-primary); font-size:0.88rem;"> There are <strong>${pendingRegistrations.length}</strong> new user registration request(s) awaiting your role/position assignment.</span>
+            </div>
+          </div>
+          <button class="btn btn-sm btn-primary" onclick="App.navigateTo('users')" style="white-space:nowrap; border-radius:8px; font-weight:600; padding:6px 14px;">Review & Assign Positions</button>
+        </div>
+      ` : ''}
+
       ${outsideList.length > 0 ? `
         <div class="status-alert-banner warning">
           <div style="display:flex; align-items:center; gap:0.75rem;">
